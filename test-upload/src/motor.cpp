@@ -8,21 +8,53 @@ Motor::~Motor(){
 int Motor::getPosition(){
     return 1;
 }
-
-void Motor::setPosition(int pos){
+void Motor::clearFault(){
+    Wire.beginTransmission(MOTOR_ADRESS);
+    
+    Wire.write(0x01); // Select control register
+    //byte controlByte = 0b11111101; // Assuming this sets direction and other control bits
+    
+    Wire.write(0b10000000);
+    
+    Wire.endTransmission();
+}
+void Motor::setPosition(int pos) {
+    byte voltage = 0x06;
+    byte directionByte = 0b00;
+    switch (pos) {
+        case 1:
+            directionByte = 0b01;
+            Serial.println("Forward");
+            break;
+        case 2:
+            directionByte = 0b10;
+            Serial.println("Backwards");
+            break;
+        case 3:
+            directionByte = 0b11;
+            Serial.println("Brake");
+            break;
+        case 4:
+            directionByte = 0b00;
+            Serial.println("Standby");
+            break;
+        default:
+            // Handle invalid position
+            break;
+    }
+    
+    byte writeByte = (voltage << 2) | directionByte;
+    //Serial.print("write byte:");
+    //Serial.println(writeByte, BIN);
     
     Wire.beginTransmission(MOTOR_ADRESS);
-    Wire.write(0x0);
-    byte controlByte = 0b00001001;
-    if(pos == 1){
-        Wire.write(controlByte);
-        Serial.println("forward");
-    }else{
-        Wire.write(0x3E);
-        Serial.println("standby");
-    }
-    Wire.endTransmission();
     
+    Wire.write(0x00); // Select control register
+    //byte controlByte = 0b11111101; // Assuming this sets direction and other control bits
+    
+    Wire.write(writeByte);
+    
+    Wire.endTransmission();
 }
 int Motor::checkRotation() {
     encoder.checkQuadrant();
@@ -66,7 +98,7 @@ int Motor::readStatus(){
     Wire.requestFrom(MOTOR_ADRESS,1);
     while(Wire.available() == 0); //wait until it becomes available 
     byte status = Wire.read();
-    Serial.println(status);
+    Serial.println(status,BIN);
     return 1;
 }
 void Motor::init(int motorAddress, int encoderAddress){
