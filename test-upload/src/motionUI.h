@@ -1,4 +1,4 @@
-
+#include "Accelerometer.h"
 
 class motionUI {
     public:
@@ -9,5 +9,5 @@ class motionUI {
         void motionLoop();
         
     private:
-
+        Accelerometer accelerometer;
 };
