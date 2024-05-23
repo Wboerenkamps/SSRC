@@ -17,12 +17,15 @@ class Accelerometer {
         byte i2cRead(uint16_t deviceAddress, uint16_t registerAddress);
 
     private:
+        int16_t idleCount = 0;
+
         int ADXL345 = 0x53;
         int SDA = 6;
         int SCL = 7;
         int buzzer = 8;
         int moveLed = 9;
 
+        uint16_t POWER_CTL = 0x2D;
         uint16_t DATA_FORMAT = 0x31;
         uint16_t BW_RATE = 0x2C;
 
