@@ -16,6 +16,8 @@ class Accelerometer {
         void i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value);
         byte i2cRead(uint16_t deviceAddress, uint16_t registerAddress);
 
+        float convertAxisData(byte value0, byte value1);
+
     private:
         int16_t idleCount = 0;
 

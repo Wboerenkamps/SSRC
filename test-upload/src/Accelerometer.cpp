@@ -1,7 +1,7 @@
 #include "Accelerometer.h"
 #define buzzer 8
 #define moveLed 9
-int l = 0;
+
 Accelerometer::Accelerometer() {}
 
 Accelerometer::~Accelerometer() {}
@@ -41,15 +41,7 @@ void Accelerometer::ReadData()
     byte x0 = i2cRead(ADXL345, xDataReg0);
     byte x1 = i2cRead(ADXL345, xDataReg1);
 
-    x1 = x1 & 0x03;
-
-    uint16_t x = (x1 << 8) + x0;
-    int16_t xf = x;
-    if (xf > 511)
-    {
-        xf = xf - 1024;
-    }
-    float xa = xf * 0.004;
+    float xa = convertAxisData(x0, x1);
 
     Serial.print("X = ");
     Serial.print(xa);
@@ -59,15 +51,7 @@ void Accelerometer::ReadData()
     byte y0 = i2cRead(ADXL345, yDataReg0);
     byte y1 = i2cRead(ADXL345, yDataReg1);
 
-    y1 = y1 & 0x03;
-
-    uint16_t y = (y1 << 8) + y0;
-    int16_t yf = y;
-    if (yf > 511)
-    {
-        yf = yf - 1024;
-    }
-    float ya = yf * 0.004;
+    float ya = convertAxisData(y0, y1);
     Serial.print("Y = ");
     Serial.print(ya);
     Serial.print(" g");
@@ -76,15 +60,8 @@ void Accelerometer::ReadData()
     byte z0 = i2cRead(ADXL345, zDataReg0);
     byte z1 = i2cRead(ADXL345, zDataReg1);
 
-    z1 = z1 & 0x03;
 
-    uint16_t z = (z1 << 8) + z0;
-    int16_t zf = z;
-    if (zf > 511)
-    {
-        zf = zf - 1024;
-    }
-    float za = zf * 0.004;
+    float za = convertAxisData(z0, z1);
     Serial.print("Z = ");
     Serial.print(za);
     Serial.print(" g");
@@ -133,4 +110,16 @@ byte Accelerometer::i2cRead(uint16_t deviceAddress, uint16_t registerAddress)
     Wire.endTransmission();
     Wire.requestFrom(deviceAddress, 1);
     return Wire.read();
+}
+
+float Accelerometer::convertAxisData(byte value0, byte value1) {
+    value1 = value1 & 0x03;
+    
+    uint16_t value = (value1 << 8) + value0;
+    int16_t valuef = value;
+    if (valuef > 511)
+    {
+        valuef = valuef - 1024;
+    }
+    return valuef * 0.004;
 }
