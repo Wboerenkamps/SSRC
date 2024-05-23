@@ -2,17 +2,16 @@
 //#include <Wire.h> //This is for i2C
 // #include "encoder.h"
 #include "motor.h"
-#include "motionUI.h"
+#include "Accelerometer.h"
 //#include "SSRC.h"
-#define SDA 6
-#define SCL 7
+// #define SDA 6
+// #define SCL 7
 // Encoder encoder;
 Motor motor;
 //SSRC cube;
 void setup()
 {
-    motionUI motionui;
-    motionui.motionSetup();
+   
 
     // Serial.begin(115200); //start serial - tip: don't use serial if you don't need it (speed considerations)
     // Wire.begin(SDA,SCL); //start i2C  
@@ -28,20 +27,22 @@ void setup()
 
 void loop()
 {    
-    motor.setPosition(1);
-    motor.readStatus();
-    delay(2000);
-    motor.clearFault();
-    motor.setPosition(4);
-    motor.readStatus();
-    delay(2000);
-    motor.setPosition(2);
-    motor.readStatus();
+    Accelerometer accelerometer;
+    accelerometer.Setup();
+    // motor.setPosition(1);
+    // motor.readStatus();
+    // delay(2000);
+    // motor.clearFault();
+    // motor.setPosition(4);
+    // motor.readStatus();
+    // delay(2000);
+    // motor.setPosition(2);
+    // motor.readStatus();
     
-    delay(2000);
-    motor.setPosition(4);
-    motor.readStatus();
-    delay(2000);
+    // delay(2000);
+    // motor.setPosition(4);
+    // motor.readStatus();
+    // delay(2000);
     
     //cube.scramble();
     //motor.checkRotation();

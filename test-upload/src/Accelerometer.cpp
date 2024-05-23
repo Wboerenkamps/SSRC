@@ -9,48 +9,33 @@ Accelerometer::~Accelerometer() {}
 void Accelerometer::Setup() {
     pinMode(buzzer, OUTPUT);
     pinMode(moveLed, OUTPUT);
-    Serial.begin(115200); // Initiate serial communication for printing the results on the Serial monitor
-    Wire.begin(SDA, SCL); // Initiate the Wire library
-
-     Wire.beginTransmission(ADXL345);
-    Wire.write(0x31);
-    Wire.write(0x0);
-    Wire.endTransmission();
-
-     Wire.beginTransmission(ADXL345);
-    Wire.write(0x2C);
-    Wire.write(0x6);
-    Wire.endTransmission();
-
-    //i2cWrite(ADXL345, DATA_FORMAT, 0x0);
-
-    //i2cWrite(ADXL345, BW_RATE, 0x6);
+    Serial.begin(115200);
+    Wire.begin(SDA, SCL); 
+    i2cWrite(ADXL345, 0x2D, 8);
+    i2cWrite(ADXL345, DATA_FORMAT, 0);
+    i2cWrite(ADXL345, BW_RATE, 6);
+    
 
     delay(10);
     SetupData();
 
-    loop();
+    Loop();
 }
 
 void Accelerometer::Loop() {
     while(true) {
         ReadData();
-        //readDoubletap();
         delay(50);
     }
 }
 
 void Accelerometer::SetupData() {
-    // Set ADXL345 in measuring mode
-    Wire.beginTransmission(ADXL345); // Start communicating with the device 
-    Wire.write(0x2D); // Access/ talk to POWER_CTL Register - 0x2D
-    // Enable measurement
-    Wire.write(8); // (8dec -> 0000 1000 binary) Bit D3 High for measuring enable 
-    Wire.endTransmission();
-    delay(10);
+    i2cWrite(ADXL345, BW_RATE, 8);
 }
 
 void Accelerometer::ReadData() {
+
+    //i2cRead(ADXL345, xDataReg0);
     Wire.beginTransmission(0x53);
     Wire.write(0x32);
     Wire.endTransmission();
@@ -131,7 +116,7 @@ void Accelerometer::ReadData() {
     tone(buzzer, 2000);
   }
 
-  if (ya <= 0.05 && ya >= -0.05 && xa <= 0.12 && xa >= 0.03 && za <= 1 && za >= 0.90) 
+  if (ya <= 0.05 && ya >= -0.05 && xa <= 0.12 && xa >= 0.00 && za <= 1 && za >= 0.90) 
   {
     l++;
     if (l >= 5) {
@@ -147,11 +132,19 @@ void Accelerometer::ReadData() {
   noTone(buzzer);
 }
 
-// void Accelerometer::i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value) {
-//     Wire.beginTransmission(deviceAddress);
-//     Wire.write(registerAddress);
-//     Wire.write(value);
-//     Wire.endTransmission();
+void Accelerometer::i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value) {
+    Wire.beginTransmission(deviceAddress);
+    Wire.write(registerAddress);
+    Wire.write(value);
+    Wire.endTransmission();
+    delay(10);
+}
 
-// }
+byte Accelerometer::i2cRead(uint16_t deviceAddress, uint16_t registerAddress) {
+    Wire.beginTransmission(deviceAddress);
+    Wire.write(registerAddress);
+    Wire.endTransmission();
+    Wire.requestFrom(deviceAddress, 1);
+    return Wire.read();
+}
 
