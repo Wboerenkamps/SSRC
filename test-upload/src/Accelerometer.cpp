@@ -33,10 +33,16 @@ void Accelerometer::SetupData()
     i2cWrite(ADXL345, POWER_CTL, 8);   // Turn on measure bit
     i2cWrite(ADXL345, DATA_FORMAT, 0); // Set g range to 2g
     i2cWrite(ADXL345, BW_RATE, 6);     // Set bandwidth and output data rate
+    callibrate();
 }
 
 void Accelerometer::ReadData()
 {
+    Serial.println();
+    Serial.print(yMotionThreshHoldMax);
+    Serial.println();
+    Serial.print(yMotionThreshHoldMin);
+    Serial.println();
 
     byte x0 = i2cRead(ADXL345, xDataReg0);
     byte x1 = i2cRead(ADXL345, xDataReg1);
@@ -60,7 +66,6 @@ void Accelerometer::ReadData()
     byte z0 = i2cRead(ADXL345, zDataReg0);
     byte z1 = i2cRead(ADXL345, zDataReg1);
 
-
     float za = convertAxisData(z0, z1);
     Serial.print("Z = ");
     Serial.print(za);
@@ -76,7 +81,9 @@ void Accelerometer::ReadData()
         tone(buzzer, 2000);
     }
 
-    if (ya <= 0.05 && ya >= -0.05 && xa <= 0.12 && xa >= 0.00 && za <= 1 && za >= 0.90)
+    if (ya <= yMotionThreshHoldMax && ya >= yMotionThreshHoldMin && 
+    xa <= xMotionThreshHoldMax && xa >= xMotionThreshHoldMin && 
+    za <= zMotionThreshHoldMax && za >= zMotionThreshHoldMin)
     {
         idleCount++;
         if (idleCount >= 5)
@@ -109,12 +116,14 @@ byte Accelerometer::i2cRead(uint16_t deviceAddress, uint16_t registerAddress)
     Wire.write(registerAddress);
     Wire.endTransmission();
     Wire.requestFrom(deviceAddress, 1);
+    delay(10);
     return Wire.read();
 }
 
-float Accelerometer::convertAxisData(byte value0, byte value1) {
+float Accelerometer::convertAxisData(byte value0, byte value1)
+{
     value1 = value1 & 0x03;
-    
+
     uint16_t value = (value1 << 8) + value0;
     int16_t valuef = value;
     if (valuef > 511)
@@ -122,4 +131,43 @@ float Accelerometer::convertAxisData(byte value0, byte value1) {
         valuef = valuef - 1024;
     }
     return valuef * 0.004;
+}
+
+bool Accelerometer::callibrate()
+{
+    
+    for (int i = 0; i < 100; i++)
+    {
+        byte x0 = i2cRead(ADXL345, xDataReg0);
+        byte x1 = i2cRead(ADXL345, xDataReg1);
+
+        xaTotal += convertAxisData(x0, x1);
+
+        byte y0 = i2cRead(ADXL345, yDataReg0);
+        byte y1 = i2cRead(ADXL345, yDataReg1);
+
+        yaTotal += convertAxisData(y0, y1);
+
+        byte z0 = i2cRead(ADXL345, zDataReg0);
+        byte z1 = i2cRead(ADXL345, zDataReg1);
+
+        zaTotal += convertAxisData(z0, z1);
+        
+        delay(10);
+    }
+
+    float xMotionThreshHold = xaTotal / 100;
+    float yMotionThreshHold = yaTotal / 100;
+    float zMotionThreshHold = zaTotal / 100;
+
+    xMotionThreshHoldMin = xMotionThreshHold - 0.05;
+    xMotionThreshHoldMax = xMotionThreshHold + 0.05;
+
+    yMotionThreshHoldMin = yMotionThreshHold - 0.05;
+    yMotionThreshHoldMax = yMotionThreshHold + 0.05;
+
+    zMotionThreshHoldMin = zMotionThreshHold - 0.05;
+    zMotionThreshHoldMax = zMotionThreshHold + 0.05;
+
+    return true;
 }

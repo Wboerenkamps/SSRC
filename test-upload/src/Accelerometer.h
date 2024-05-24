@@ -18,6 +18,8 @@ class Accelerometer {
 
         float convertAxisData(byte value0, byte value1);
 
+        bool callibrate();
+
     private:
         int16_t idleCount = 0;
 
@@ -50,4 +52,16 @@ class Accelerometer {
         int16_t zDataReg0 = 0x36;
         int16_t zDataReg1 = 0x37;
         
+        float xMotionThreshHoldMin = 0;
+        float xMotionThreshHoldMax = 0;
+        
+        float yMotionThreshHoldMin = 0;
+        float yMotionThreshHoldMax = 0;
+
+        float zMotionThreshHoldMin = 0;
+        float zMotionThreshHoldMax = 0;
+
+        float xaTotal = 0;
+        float yaTotal = 0;
+        float zaTotal = 0;
 };
