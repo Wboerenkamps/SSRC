@@ -108,17 +108,13 @@ void SSRC::testEncoder(){
 }
 void SSRC::testMotor(){
     motors[0].moveClockwise();
-    //delay(2000);
-    // delay(2000);
-    // motors[0].moveClockwise();
-    // //delay(2000);
-    // delay(2000);
-    // motors[0].moveCounterClockwise();
-    // delay(2000);
-    // // delay(10);
-    // motors[0].moveClockwise();
-    // delay(2000);
-    //delay(2000);
+    delay(2000);
+    motors[0].moveClockwise();
+    delay(2000);
+    motors[0].moveCounterClockwise();
+    delay(2000);
+    motors[0].moveClockwise();
+    delay(2000);
 }
 void SSRC::init(){
     // for(int i = 1; i < 6; i++){

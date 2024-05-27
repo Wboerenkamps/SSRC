@@ -29,52 +29,5 @@ void loop()
     //cube.scramble();
     cube.testMotor();
     //cube.testEncoder();
-    // motor.testRotate();
-    // motor.moveClockwise();
-    // delay(2000);
-    // motor.moveClockwise();
-    // delay(2000);
-    // motor.moveCounterClockwise();
-    // delay(2000);
-    // motor.moveClockwise();
-    // delay(2000);
 
-
-    // // delay(250);
-    // motor.setPosition(1);
-    // // motor.readStatus();
-    // delay(5000);
-    // motor.setPosition(2);
-    // // motor.readStatus();
-    // delay(5000);
-    // motor.setPosition(3);
-    // // motor.readStatus();
-    // delay(5000);
-    // motor.setPosition(4);
-    // // motor.readStatus();
-    // delay(5000);
-    
-    //cube.scramble();
-    //motor.checkRotation();
-    //delay(250);
-    //Serial.print("\033[2J\033[1;1H");
-    // encoder.readRawAngle(); //ask the value from the sensor
-    // encoder.correctAngle(); //tare the value
-    // encoder.checkQuadrant(); //check quadrant, check rotations, check absolute angular position
-    
-    // Serial.print("  ");
-    // encoder.correctAngle(); //tare the value
-    // Serial.print("  ");
-    // encoder.checkQuadrant(); //check quadrant, check rotations, check absolute angular position
-    // Serial.print("\033[H"); 
-    // sleep(5);
-    //refreshDisplay();
-    //delay(100); //wait a little - adjust it for "better resolution"
-   // Make servo go to 0 degrees 
-    // motor.readStatus();
-    // motor.setPosition(1);
-    // sleep(5);motor.readStatus();
-    // motor.setPosition(0);
-    // motor.readStatus();
-    // sleep(5);
 }

@@ -130,16 +130,18 @@ void Motor::moveToAngle(float targetAngle,int dir) {
         // // Check if the absolute error is within the threshold to consider the angle reached
         if (abs(error) < THRESHOLD) {
             this->rotate(3, 55); // Assuming 3 and 63 are constants for holding position
+            this->rotate(4, 55); // Assuming 3 and 63 are constants for holding position
             
             Serial.println("position reached");
-            int starttime = millis();
-            int endtime = starttime;
-            while ((endtime - starttime) <=1000) // do this loop for up to 1000mS
-            {           
-                float angle = encoder.correctAngle();
-                delay(20);
-                endtime = millis();
-            }
+            delay(1000);
+            // int starttime = millis();
+            // int endtime = starttime;
+            // while ((endtime - starttime) <=1000) // do this loop for up to 1000mS
+            // {           
+            //     float angle = encoder.correctAngle();
+            //     delay(20);
+            //     endtime = millis();
+            // }
             break;
         }
         // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
