@@ -18,25 +18,25 @@ void Motor::clearFault(){
     
     Wire.endTransmission();
 }
-void Motor::setPosition(int pos) {
-    byte voltage = 0x06;
+void Motor::rotate(int dir,int speed) {
+    byte voltage = speed;
     byte directionByte = 0b00;
-    switch (pos) {
+    switch (dir) {
         case 1:
             directionByte = 0b01;
-            Serial.println("Forward");
+            //Serial.println("Forward");
             break;
         case 2:
             directionByte = 0b10;
-            Serial.println("Backwards");
+            //Serial.println("Backwards");
             break;
         case 3:
             directionByte = 0b11;
-            Serial.println("Brake");
+            //Serial.println("Brake");
             break;
         case 4:
             directionByte = 0b00;
-            Serial.println("Standby");
+            //Serial.println("Standby");
             break;
         default:
             // Handle invalid position
@@ -56,6 +56,149 @@ void Motor::setPosition(int pos) {
     
     Wire.endTransmission();
 }
+void Motor::testRotate(){
+    this->rotate(FORWARD,8);
+    encoder.correctAngle();
+    delay(20);
+}
+void Motor::setPosition(int pos,int dir) {
+    float targetAngle;
+    switch (pos) {
+        case 1:
+            targetAngle = 0;
+            Serial.println("0");
+            break;
+        case 2:
+            targetAngle = 90;
+            Serial.println("90");
+            break;
+        case 3:
+            targetAngle = 180;
+            Serial.println("180");
+            break;
+        case 4:
+            targetAngle = 270;
+            Serial.println("270");
+            break;
+        default:
+            Serial.println("Invalid position");
+            return;
+    }
+    
+    moveToAngle(targetAngle, dir);
+    Serial.println("Position reached");
+}
+
+void Motor::moveToAngle(float targetAngle,int dir) {
+    const float THRESHOLD = 5.0; // Define a threshold for the target angle
+    const float MAX_SPEED = 56;  // Define maximum motor speed
+    const float MIN_SPEED = 6;  // Define minimum motor speed
+    const float MAX_INTEGRAL = 100; // Define maximum integral term to prevent windup
+
+    while (true) {
+        float angle = encoder.correctAngle();
+        float error = targetAngle - angle;
+        Serial.print("error: ");
+        Serial.println(error);
+        // Serial.print("target: ");
+        // Serial.println(targetAngle);
+        // if (error > 180) {
+        //     error -= 360;
+        // } else if (error < -180) {
+        //     error += 360;
+        // }
+
+        // integral += error;
+
+        // Prevent integral windup
+        // if (integral > MAX_INTEGRAL) integral = MAX_INTEGRAL;
+        // if (integral < -MAX_INTEGRAL) integral = 0;
+
+        // float derivative = error - previousError;
+        // float raw_output = Kp * error + Ki * integral + Kd * derivative;
+
+        // // Clamp the raw output to the range -100 to 100
+        // if (raw_output > 100) raw_output = 100;
+        // if (raw_output < 0) raw_output = 0;
+
+        //Serial.print("output: ");
+        //Serial.println(raw_output);
+
+        // Update the previous error
+        // previousError = error;
+
+        // // Check if the absolute error is within the threshold to consider the angle reached
+        if (abs(error) < THRESHOLD) {
+            this->rotate(3, 55); // Assuming 3 and 63 are constants for holding position
+            
+            Serial.println("position reached");
+            int starttime = millis();
+            int endtime = starttime;
+            while ((endtime - starttime) <=1000) // do this loop for up to 1000mS
+            {           
+                float angle = encoder.correctAngle();
+                delay(20);
+                endtime = millis();
+            }
+            break;
+        }
+        // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
+        //int output = mapOutputToSpeed(abs(raw_output), 0, 100, MIN_SPEED, MAX_SPEED);
+        delay(20);
+        if (dir == 1) {
+            this->rotate(FORWARD, 10);
+        } else if(dir == 2) {
+            this->rotate(BACKWARDS, 10); // Pass positive speed value
+        }
+        
+    }
+}
+
+void Motor::moveClockwise(){
+    int newPos;
+    if(this->position == 4){
+        newPos = 1;
+    }else{
+        newPos = this->position + 1;
+    }
+    Serial.print("clockwise to: ");
+    Serial.println(newPos);
+    this->setPosition(newPos,1);
+    
+    
+    position = newPos;
+}
+void Motor::moveCounterClockwise(){
+    int newPos;
+    if(position == 1){
+        newPos = 4;
+    }else{
+        newPos = position - 1;
+    }
+    Serial.print("counter clockwise to: ");
+    Serial.println(newPos);
+    delay(1000);
+    this->setPosition(newPos,2);
+    
+    
+    position = newPos;
+}
+// Function to map raw PID output to the speed range (6 to 63)
+int Motor::mapOutputToSpeed(float raw_output, float raw_min, float raw_max, int speed_min, int speed_max) {
+    // Clip raw output to the range [raw_min, raw_max]
+    if (raw_output > raw_max) raw_output = raw_max;
+    if (raw_output < raw_min) raw_output = raw_min;
+
+    // Perform linear mapping from raw_output range to speed range
+    int mapped_speed = (int)((raw_output - raw_min) * (speed_max - speed_min) / (raw_max - raw_min) + speed_min);
+
+    // Clip the mapped speed to the allowable range
+    if (mapped_speed > speed_max) mapped_speed = speed_max;
+    if (mapped_speed < speed_min) mapped_speed = speed_min;
+
+    return mapped_speed;
+}
+
 int Motor::checkRotation() {
     encoder.checkQuadrant();
     int prevQuad = encoder.getPrevQuad();
@@ -104,6 +247,7 @@ int Motor::readStatus(){
 void Motor::init(int motorAddress, int encoderAddress){
     this->motorAddress = motorAddress;
     this->encoderAddress = encoderAddress;
+    this->rotate(3,63);
     encoder.init(encoderAddress);
     
 }

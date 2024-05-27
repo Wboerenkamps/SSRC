@@ -5,16 +5,24 @@
 #include <Arduino.h>
 #include <Wire.h> 
 #include "encoder.h"
+#define FORWARD 1
+#define BACKWARDS 2
 class Motor 
 {
     public:
         Motor();
         virtual ~Motor();
         int getPosition();
-        void setPosition(int pos);
+        void setPosition(int pos,int dir);
         int checkRotation();
         int readStatus();
         void clearFault();
+        void testRotate();
+        void moveToAngle(float targetAngle,int dir);
+        int mapOutputToSpeed(float raw_output, float raw_min, float raw_max, int speed_min, int speed_max);
+        void moveClockwise();
+        void moveCounterClockwise();
+        void rotate(int,int);
         int PID();
         void init(int motorAddress, int encoderAddress);
     private:
@@ -22,4 +30,11 @@ class Motor
         Encoder encoder;
         int motorAddress;
         int encoderAddress;
+
+        float Kp = 1.0; // Proportional gain
+        float Ki = 0.01; // Integral gain
+        float Kd = 0.1; // Derivative gain
+        float previousError = 0;
+        float integral = 0;
+        int position = 1;
 };

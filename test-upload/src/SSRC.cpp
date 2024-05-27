@@ -43,7 +43,7 @@ void SSRC::stateMachine(){
             //go to computing when it is put on a table for 5 seconds
             break;
         case computing:
-            //algo.solveCube();
+            algo.solveCube();
             // when done go to 
             break;
         case resolving:
@@ -83,24 +83,42 @@ void SSRC::scramble(){
         Serial.print("motor: ");
         Serial.print(1);
         Serial.println(" rotation Detected");
+        delay(500);
     }
-    switch(rotation){
-                    case 0:
-                        break;
-                    case 1:
-                        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                    case 2:
-                        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                    case 3:
-                        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                }
-                if(rotation == 1){
-                    algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                }else if(rotation == 2){
-                    algo.rotateFaceClockwise(algo.intToCubeFace(1));
-                } 
-    delay(250);
+    switch(rotation)
+    {
+        case 0:
+            break;
+        case 1:
+            algo.rotateFaceClockwise(algo.intToCubeFace(1));
+        case 2:
+            algo.rotateFaceClockwise(algo.intToCubeFace(1));
+            algo.rotateFaceClockwise(algo.intToCubeFace(1));
+        case 3:
+            algo.rotateFaceCounterClockwise(algo.intToCubeFace(1));
+    }
+    //algo.printCube();
+    delay(100);
+}
+void SSRC::resolve(){
+}
+void SSRC::testEncoder(){
+    motors[0].testRotate();
+    //delay(250);
+}
+void SSRC::testMotor(){
+    motors[0].moveClockwise();
+    //delay(2000);
+    // delay(2000);
+    // motors[0].moveClockwise();
+    // //delay(2000);
+    // delay(2000);
+    // motors[0].moveCounterClockwise();
+    // delay(2000);
+    // // delay(10);
+    // motors[0].moveClockwise();
+    // delay(2000);
+    //delay(2000);
 }
 void SSRC::init(){
     // for(int i = 1; i < 6; i++){

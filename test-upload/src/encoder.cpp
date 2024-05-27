@@ -1,17 +1,4 @@
 #include "encoder.h"
-
-//Servo Servo1;  
-//#include <SSD1306Ascii.h> //i2C OLED
-//#include <SSD1306AsciiWire.h> //i2C OLED
-
-// i2C OLED
-//#define I2C_ADDRESS 0x3C
-//#define RST_PIN -1
-//SSD1306AsciiWire oled;
-//float OLEDTimer = 0; //Timer for the screen refresh
-//I2C pins:
-//STM32: SDA: PB7 SCL: PB6
-//Arduino: SDA: A4 SCL: A5
 Encoder::Encoder(){
     
 }
@@ -24,9 +11,10 @@ void Encoder::init(int address){
   Serial.println("encoder init");
   checkMagnetPresence(); //check the magnet (blocks until magnet is found)
   readRawAngle(); //make a reading so the degAngle gets updated
-  startAngle = degAngle + 45; //update startAngle with degAngle - for taring
+  //startAngle = degAngle + 45; //update startAngle with degAngle - for taring
+  startAngle = degAngle;
 }
-void Encoder::readRawAngle()
+float Encoder::readRawAngle()
 { 
   selectChannel();
   //7:0 - bits
@@ -49,45 +37,57 @@ void Encoder::readRawAngle()
   
   //4 bits have to be shifted to its proper place as we want to build a 12-bit number
   highbyte = highbyte << 8; //shifting to left
-  //What is happening here is the following: The variable is being shifted by 8 bits to the left:
-  //Initial value: 00000000|00001111 (word = 16 bits or 2 bytes)
-  //Left shifting by eight bits: 00001111|00000000 so, the high byte is filled in
   
   //Finally, we combine (bitwise OR) the two numbers:
-  //High: 00001111|00000000
-  //Low:  00000000|00001111
-  //      -----------------
-  //H|L:  00001111|00001111
   rawAngle = highbyte | lowbyte; //int is 16 bits (as well as the word)
 
-  //We need to calculate the angle:
-  //12 bit -> 4096 different levels: 360° is divided into 4096 equal parts:
-  //360/4096 = 0.087890625
-  //Multiply the output of the encoder with 0.087890625
-  degAngle = rawAngle * 0.087890625; 
-  
-  //Serial.print("Deg angle: ");
-  //Serial.print(degAngle, 2); //absolute position of the encoder within the 0-360 circle
-  
+  // Calculate the angle:
+  // 12 bit -> 4096 different levels: 360° is divided into 4096 equal parts:
+  // 360/4096 = 0.087890625
+  // Multiply the output of the encoder with 0.087890625
+  degAngle = rawAngle * 0.087890625;
+
+  // // Check if the angle has transitioned from 360 to 0 or vice versa
+  // if (tempAngle - degAngle > 300) {
+  //   // If the angle transitioned from 360 to 0, add 360 to the temporary angle
+  //   tempAngle += 360;
+  // } else if (degAngle - tempAngle > 300) {
+  //   // If the angle transitioned from 0 to 360, subtract 360 from the temporary angle
+  //   tempAngle -= 360;
+  // }
+  // Serial.print("not cool angle: ");
+  //   Serial.println(tempAngle, 2);
+  // // Update degAngle if the difference is within the acceptable range or if it's the first reading (-1)
+  // float difference = abs(tempAngle - degAngle);
+  // if (difference <= 20 || degAngle == -1) {
+  //   degAngle = tempAngle;
+  //   // Print the corrected/tared angle
+    return degAngle;
 }
 
-void Encoder::correctAngle()
-{
-  readRawAngle();
-  //recalculate angle
-  correctedAngle = degAngle - startAngle; //this tares the position
 
-  if(correctedAngle < 0) //if the calculated angle is negative, we need to "normalize" it
-  {
-  correctedAngle = correctedAngle + 360; //correction for negative numbers (i.e. -15 becomes +345)
-  }
-  else
-  {
-    //do nothing
-  }
-  Serial.print("Corrected angle: ");
-  Serial.println(correctedAngle, 2); //print the corrected/tared angle  
+float Encoder::correctAngle() {
+    // Read raw angle from encoder
+    readRawAngle();
+
+    // Recalculate angle relative to startAngle
+    correctedAngle = degAngle - startAngle;
+
+    // Normalize negative angles
+    if (correctedAngle < 0) {
+      correctedAngle += 360; // Correction for negative numbers (i.e. -15 becomes +345)
+    }
+
+      // Print the corrected/tared angle
+      Serial.print("Corrected angle: ");
+      Serial.println(correctedAngle, 2);
+    // Check if the absolute difference is within the acceptable range
+
+  // Return the corrected angle
+  return correctedAngle;
 }
+
+
 void Encoder::selectChannel()
   {
     if (address > 7) return;
@@ -104,70 +104,27 @@ void Encoder::checkQuadrant()
   ---|---
   3  |  2
   */
-  correctAngle();
-  //Quadrant 1
-  // switch(previousquadrantNumber){
-  //   case 1:
-  //     if(correctedAngle > 270 && correctedAngle < 340)
-  //     {
-  //       quadrantNumber = 4;
-  //     }
-  //     if(correctedAngle > 110 && correctedAngle <=180)
-  //     {
-  //       quadrantNumber = 2;
-  //     }
-      
-  //     break;
-  //   case 2:
-  //     if(correctedAngle >= 0 && correctedAngle <=70)
-  //     {
-  //       quadrantNumber = 1;
-  //     }
-  //     if(correctedAngle > 190 && correctedAngle <=270)
-  //     {
-  //       quadrantNumber = 3;
-  //     }
-  //     break;
-  //   case 3:
-  //     if(correctedAngle > 90 && correctedAngle <=160)
-  //     {
-  //       quadrantNumber = 2;
-  //     }
-  //     if(correctedAngle > 290 && correctedAngle <360)
-  //     {
-  //       quadrantNumber = 4;
-  //     }
-  //     break;
-  //   case 4:
-  //     if(correctedAngle > 180 && correctedAngle <=250)
-  //     {
-  //       quadrantNumber = 3;
-  //     }
-  //     if(correctedAngle >= 20 && correctedAngle <=90)
-  //     {
-  //       quadrantNumber = 1;
-  //     }
-  //     break;
-  // }
-  if(correctedAngle >= 0 && correctedAngle <=90)
+  
+  float quadAngle = correctAngle() + 45;
+  if(quadAngle >= 0 && quadAngle <=90)
   {
     quadrantNumber = 1;
   }
 
   //Quadrant 2
-  if(correctedAngle > 90 && correctedAngle <=180)
+  if(quadAngle > 90 && quadAngle <=180)
   {
     quadrantNumber = 2;
   }
 
   //Quadrant 3
-  if(correctedAngle > 180 && correctedAngle <=270)
+  if(quadAngle > 180 && quadAngle <=270)
   {
     quadrantNumber = 3;
   }
 
   //Quadrant 4
-  if(correctedAngle > 270 && correctedAngle <360)
+  if(quadAngle > 270 && quadAngle <360)
   {
     quadrantNumber = 4;
   }

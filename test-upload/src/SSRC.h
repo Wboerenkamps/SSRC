@@ -15,8 +15,10 @@ class SSRC{
         void setState(states);
         int getState();
         void stateMachine();
+        void testMotor();
+        void testEncoder();
         void scramble();
-        int resolve();
+        void resolve();
         void init();
     private:
         states state = idle;
