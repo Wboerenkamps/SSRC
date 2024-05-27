@@ -1,12 +1,15 @@
 #include "motor.h"
 #include "cfop.h"
+#include "Accelerometer.h"
+
 enum states {
     idle,
     scrambling,
     computing,
     resolving,
     interrupted,
-    solved
+    solved,
+    initialize
 };
 class SSRC{
     public:
@@ -19,7 +22,10 @@ class SSRC{
         int resolve();
         void init();
     private:
-        states state = idle;
+        states state = initialize;
         Motor motors[6];
         Cfop algo;
+
+        Accelerometer accelerometer;
+        
 };

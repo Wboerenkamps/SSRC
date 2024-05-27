@@ -20,7 +20,23 @@ class Accelerometer {
 
         bool callibrate();
 
+        // GETTERS/SETTERS
+
+        void idleSet(bool state);
+        void scrambleSet(bool state);
+        void solveSet(bool state);
+
+        bool idleGet();
+        bool scrambleGet();
+        bool solveGet();
+
     private:
+        // UI STATES
+
+        bool idle = false;
+        bool scramble = false;
+        bool solve = false;
+
         int16_t idleCount = 0;
 
         int ADXL345 = 0x53;

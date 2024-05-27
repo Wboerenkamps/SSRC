@@ -1,23 +1,26 @@
 //#include <Arduino.h>
 //#include <Wire.h> //This is for i2C
 // #include "encoder.h"
-#include "motor.h"
-#include "Accelerometer.h"
+// #include "motor.h"
+// #include "Accelerometer.h"
+#include "SSRC.h"
+
 //#include "SSRC.h"
-// #define SDA 6
-// #define SCL 7
+#define SDA 6
+#define SCL 7
 // Encoder encoder;
 Motor motor;
 //SSRC cube;
 void setup()
 {
-   
+    Serial.begin(115200);
+    Wire.begin(SDA,SCL);
+    Serial.println("start");
 
     // Serial.begin(115200); //start serial - tip: don't use serial if you don't need it (speed considerations)
     // Wire.begin(SDA,SCL); //start i2C  
     // Wire.setClock(800000L); //fast clock
     // sleep(5);
-    // Serial.println("start");
     //motor.readStatus();
     // encoder.init();
     //motor.init(1,1);
@@ -27,8 +30,10 @@ void setup()
 
 void loop()
 {    
-    Accelerometer accelerometer;
-    accelerometer.Setup();
+    SSRC ssrc;
+
+    ssrc.stateMachine();
+    
     // motor.setPosition(1);
     // motor.readStatus();
     // delay(2000);

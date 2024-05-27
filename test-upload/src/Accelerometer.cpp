@@ -38,46 +38,48 @@ void Accelerometer::SetupData()
 
 void Accelerometer::ReadData()
 {
-    Serial.println();
-    Serial.print(yMotionThreshHoldMax);
-    Serial.println();
-    Serial.print(yMotionThreshHoldMin);
-    Serial.println();
+    // Serial.println();
+    // Serial.print(yMotionThreshHoldMax);
+    // Serial.println();
+    // Serial.print(yMotionThreshHoldMin);
+    // Serial.println();
 
     byte x0 = i2cRead(ADXL345, xDataReg0);
     byte x1 = i2cRead(ADXL345, xDataReg1);
 
     float xa = convertAxisData(x0, x1);
 
-    Serial.print("X = ");
-    Serial.print(xa);
-    Serial.print(" g");
-    Serial.println();
+    // Serial.print("X = ");
+    // Serial.print(xa);
+    // Serial.print(" g");
+    // Serial.println();
 
     byte y0 = i2cRead(ADXL345, yDataReg0);
     byte y1 = i2cRead(ADXL345, yDataReg1);
 
     float ya = convertAxisData(y0, y1);
-    Serial.print("Y = ");
-    Serial.print(ya);
-    Serial.print(" g");
-    Serial.println();
+    // Serial.print("Y = ");
+    // Serial.print(ya);
+    // Serial.print(" g");
+    // Serial.println();
 
     byte z0 = i2cRead(ADXL345, zDataReg0);
     byte z1 = i2cRead(ADXL345, zDataReg1);
 
     float za = convertAxisData(z0, z1);
-    Serial.print("Z = ");
-    Serial.print(za);
-    Serial.print(" g");
-    Serial.println();
+    // Serial.print("Z = ");
+    // Serial.print(za);
+    // Serial.print(" g");
+    // Serial.println();
 
     if (za >= 2)
     {
+        scrambleSet(true);
         tone(buzzer, 100);
     }
     if (xa >= 2.03)
     {
+        solveSet(true);
         tone(buzzer, 2000);
     }
 
@@ -88,11 +90,13 @@ void Accelerometer::ReadData()
         idleCount++;
         if (idleCount >= 5)
         {
+            idleSet(true);
             digitalWrite(moveLed, HIGH);
         }
     }
     else
     {
+        idleSet(false);
         idleCount = 0;
         digitalWrite(moveLed, LOW);
     }
@@ -170,4 +174,28 @@ bool Accelerometer::callibrate()
     zMotionThreshHoldMax = zMotionThreshHold + 0.05;
 
     return true;
+}
+
+void Accelerometer::idleSet(bool state) {
+    idle = state;
+}
+
+void Accelerometer::scrambleSet(bool state) {
+    scramble = state;
+}
+
+void Accelerometer::solveSet(bool state) {
+    solve = state;
+}
+
+bool Accelerometer::idleGet() {
+    return idle;
+}
+
+bool Accelerometer::scrambleGet() {
+    return scramble;
+}
+
+bool Accelerometer::solveGet() {
+    return solve;
 }
