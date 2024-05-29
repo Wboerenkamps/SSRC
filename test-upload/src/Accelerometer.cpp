@@ -32,7 +32,7 @@ void Accelerometer::Loop()
 void Accelerometer::SetupSleep() {
     i2cWrite(ADXL345, activityThreshholdReg, 0x4F);
     i2cWrite(ADXL345, inactivityThreshholdReg, 0x10);
-    i2cWrite(ADXL345, inactivityTimerReg, 0x3C);
+    i2cWrite(ADXL345, inactivityTimerReg, 0x05); //0X3C
     i2cWrite(ADXL345, ACT_INACT_CTL, 0x55);
     i2cWrite(ADXL345, 0x2E, 0xff);
 }
@@ -223,4 +223,10 @@ bool Accelerometer::scrambleGet() {
 
 bool Accelerometer::solveGet() {
     return solve;
+}
+
+bool Accelerometer::sleepGet() {
+    byte x = i2cRead(ADXL345, INT_SOURCE);
+    byte x2 = i2cRead(ADXL345, 0x2B);
+    return  ((x2 >> 3)  & 0x01);
 }

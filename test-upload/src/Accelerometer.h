@@ -34,6 +34,7 @@ class Accelerometer {
         bool idleGet();
         bool scrambleGet();
         bool solveGet();
+        bool sleepGet();
 
     private:
         // UI STATES

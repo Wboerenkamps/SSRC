@@ -16,22 +16,13 @@ int SSRC::getState()
 }
 void SSRC::stateMachine()
 {
-    accelerometer.SetupData();
-    accelerometer.SetupSleep();
-    while (true)
-    {
-        delay(100);
-        accelerometer.ReadSleep();
-        Serial.println();
-        
-    }
-
     while (true)
     {
         switch (this->state)
         {
         case initialize:
             accelerometer.SetupData();
+            accelerometer.SetupSleep();
             state = idle;
             Serial.print("Init\n");
             break;
