@@ -24,8 +24,8 @@ void setup()
     //motor.init(1,1);
     //cube.init();
     //motor.rotate(3,6);
-    delay(1000);
-    cube.init();
+    //delay(1000);
+    //cube.init();
 }
 
 void loop()

@@ -13,8 +13,13 @@ class Accelerometer {
         void SetupData();
         void ReadData();
 
+        void SetupSleep();
+        void ReadSleep();
+
         void i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value);
         byte i2cRead(uint16_t deviceAddress, uint16_t registerAddress);
+
+        
 
         float convertAxisData(byte value0, byte value1);
 
@@ -67,6 +72,11 @@ class Accelerometer {
 
         int16_t zDataReg0 = 0x36;
         int16_t zDataReg1 = 0x37;
+
+        int16_t activityThreshholdReg = 0x24;
+        int16_t inactivityThreshholdReg = 0x25;
+        int16_t inactivityTimerReg = 0x26;
+        int16_t ACT_INACT_CTL = 0x27;
         
         float xMotionThreshHoldMin = 0;
         float xMotionThreshHoldMax = 0;

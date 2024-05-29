@@ -14,6 +14,7 @@ void Accelerometer::Setup()
     Wire.begin(SDA, SCL);
 
     SetupData();
+    SetupSleep();
 
     Loop();
 }
@@ -23,17 +24,41 @@ void Accelerometer::Loop()
     while (true)
     {
         ReadData();
+        ReadSleep();
         delay(50);
     }
+}
+
+void Accelerometer::SetupSleep() {
+    i2cWrite(ADXL345, activityThreshholdReg, 0x4F);
+    i2cWrite(ADXL345, inactivityThreshholdReg, 0x10);
+    i2cWrite(ADXL345, inactivityTimerReg, 0x3C);
+    i2cWrite(ADXL345, ACT_INACT_CTL, 0x55);
+    i2cWrite(ADXL345, 0x2E, 0xff);
 }
 
 void Accelerometer::SetupData()
 {
     // Chip setup
-    i2cWrite(ADXL345, POWER_CTL, 8);   // Turn on measure bit
+    i2cWrite(ADXL345, POWER_CTL, 0x38);   // Turn on measure bit
     i2cWrite(ADXL345, DATA_FORMAT, 0); // Set g range to 2g
     i2cWrite(ADXL345, BW_RATE, 6);     // Set bandwidth and output data rate
     callibrate();
+}
+
+void Accelerometer::ReadSleep() {
+    byte x2 = i2cRead(ADXL345, 0x2B);
+    byte x = i2cRead(ADXL345, INT_SOURCE);
+    Serial.print("Activity: " );
+    Serial.print(((x >> 4)  & 0x01));
+    Serial.print("     ");
+    Serial.print("Inacivity: " );
+    Serial.print(((x >> 3)  & 0x01));
+    Serial.println();
+    Serial.print("Sleep bit: ");
+    Serial.print(((x2 >> 3)  & 0x01));
+    Serial.println();
+    delay(500);
 }
 
 void Accelerometer::ReadData()

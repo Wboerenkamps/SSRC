@@ -16,6 +16,16 @@ int SSRC::getState()
 }
 void SSRC::stateMachine()
 {
+    accelerometer.SetupData();
+    accelerometer.SetupSleep();
+    while (true)
+    {
+        delay(100);
+        accelerometer.ReadSleep();
+        Serial.println();
+        
+    }
+
     while (true)
     {
         switch (this->state)
@@ -43,7 +53,7 @@ void SSRC::stateMachine()
             //      switch(rotation){
             //          case 0:
             //              break;
-            //          case 1: 
+            //          case 1:
             //              algo.rotateFaceClockwise(algo.intToCubeFace(i));
             //              state = scrambling;
             //          case 2:
@@ -72,18 +82,14 @@ void SSRC::stateMachine()
             // go to computing when it is put on a table for 5 seconds
             break;
         case computing:
-<<<<<<< HEAD
             algo.solveCube();
-            // when done go to 
-=======
-            // algo.solveCube();
-            //  when done go to
->>>>>>> origin/dev
+            // when done go to
             break;
         case resolving:
             accelerometer.solveSet(false);
             accelerometer.scrambleSet(false);
-            for(int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++)
+            {
                 delay(500);
                 Serial.print("Solving\n");
             }
@@ -129,38 +135,6 @@ void SSRC::scramble()
         Serial.println(" rotation Detected");
         delay(500);
     }
-<<<<<<< HEAD
-    switch(rotation)
-    {
-        case 0:
-            break;
-        case 1:
-            algo.rotateFaceClockwise(algo.intToCubeFace(1));
-        case 2:
-            algo.rotateFaceClockwise(algo.intToCubeFace(1));
-            algo.rotateFaceClockwise(algo.intToCubeFace(1));
-        case 3:
-            algo.rotateFaceCounterClockwise(algo.intToCubeFace(1));
-    }
-    //algo.printCube();
-    delay(100);
-}
-void SSRC::resolve(){
-}
-void SSRC::testEncoder(){
-    motors[0].testRotate();
-    //delay(250);
-}
-void SSRC::testMotor(){
-    motors[0].moveClockwise();
-    delay(2000);
-    motors[0].moveClockwise();
-    delay(2000);
-    motors[0].moveCounterClockwise();
-    delay(2000);
-    motors[0].moveClockwise();
-    delay(2000);
-=======
     switch (rotation)
     {
     case 0:
@@ -171,18 +145,29 @@ void SSRC::testMotor(){
         algo.rotateFaceClockwise(algo.intToCubeFace(1));
         algo.rotateFaceClockwise(algo.intToCubeFace(1));
     case 3:
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
+        algo.rotateFaceCounterClockwise(algo.intToCubeFace(1));
     }
-    if (rotation == 1)
-    {
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-    }
-    else if (rotation == 2)
-    {
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-    }
-    delay(250);
->>>>>>> origin/dev
+    // algo.printCube();
+    delay(100);
+}
+void SSRC::resolve()
+{
+}
+void SSRC::testEncoder()
+{
+    motors[0].testRotate();
+    // delay(250);
+}
+void SSRC::testMotor()
+{
+    motors[0].moveClockwise();
+    delay(2000);
+    motors[0].moveClockwise();
+    delay(2000);
+    motors[0].moveCounterClockwise();
+    delay(2000);
+    motors[0].moveClockwise();
+    delay(2000);
 }
 void SSRC::init()
 {
