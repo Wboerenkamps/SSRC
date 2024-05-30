@@ -79,8 +79,8 @@ float Encoder::correctAngle() {
     }
 
       // Print the corrected/tared angle
-      Serial.print("Corrected angle: ");
-      Serial.println(correctedAngle, 2);
+      //Serial.print("Corrected angle: ");
+      //Serial.println(correctedAngle, 2);
     // Check if the absolute difference is within the acceptable range
 
   // Return the corrected angle

@@ -1136,6 +1136,9 @@ void Cfop::rotateFaceCounterClockwise(CubeFace face)
         rotateFaceClockwise(face);
     }
 };
-CubeFace Cfop::intToCubeFace(int value){
+Cfop::CubeFace Cfop::intToCubeFace(int value) {
+    if (value < DOWN || value > UP) {
+        throw std::out_of_range("Invalid value for CubeFace enum");
+    }
     return static_cast<CubeFace>(value);
-};
+}

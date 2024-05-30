@@ -4,7 +4,12 @@
 #include <string>
 #include <list>
 #include <array>
-enum CubeFace {
+
+class Cfop
+{
+	
+public:
+    enum CubeFace {
 		DOWN,
 		LEFT,
 		FRONT,
@@ -12,10 +17,6 @@ enum CubeFace {
 		BACK,
 		UP
 	};
-class Cfop
-{
-public:
-    
 	std::list<std::string> solveQueue;
 	int nrMoves = 0;
 	const std::string solvedCube[6][3][3] =
@@ -50,6 +51,7 @@ public:
 	void rotateFaceClockwise(CubeFace face);
 	void rotateFaceCounterClockwise(CubeFace face);
     CubeFace intToCubeFace(int value);
+	
 	void solveCube();
 	void cross();
 	void firstLayer();

@@ -57,7 +57,7 @@ void Motor::rotate(int dir,int speed) {
     Wire.endTransmission();
 }
 void Motor::testRotate(){
-    this->rotate(FORWARD,8);
+    //this->rotate(FORWARD,8);
     encoder.correctAngle();
     delay(20);
 }
@@ -98,8 +98,8 @@ void Motor::moveToAngle(float targetAngle,int dir) {
     while (true) {
         float angle = encoder.correctAngle();
         float error = targetAngle - angle;
-        Serial.print("error: ");
-        Serial.println(error);
+        // Serial.print("error: ");
+        // Serial.println(error);
         // Serial.print("target: ");
         // Serial.println(targetAngle);
         // if (error > 180) {
@@ -129,8 +129,8 @@ void Motor::moveToAngle(float targetAngle,int dir) {
 
         // // Check if the absolute error is within the threshold to consider the angle reached
         if (abs(error) < THRESHOLD) {
-            this->rotate(3, 55); // Assuming 3 and 63 are constants for holding position
-            this->rotate(4, 55); // Assuming 3 and 63 are constants for holding position
+            this->rotate(3, 55);
+            this->rotate(4, 55); 
             
             Serial.println("position reached");
             delay(1000);

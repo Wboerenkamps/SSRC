@@ -25,15 +25,14 @@ void setup()
     //cube.init();
     //motor.rotate(3,6);
     delay(1000);
-    cube.init();
 }
 
 void loop()
 {    
-    SSRC ssrc;
 
-    ssrc.stateMachine();
-    
+    cube.stateMachine();
+    //cube.testEncoder();
+    //cube.scramble();
     // motor.setPosition(1);
     // motor.readStatus();
     // delay(2000);
