@@ -1,25 +1,19 @@
 #include "SSRC.h"
+#include "string"
+SSRC::SSRC(){
 
-SSRC::SSRC()
-{
 }
-SSRC::~SSRC()
-{
-}
-void SSRC::setState(states newState)
-{
-}
+SSRC::~SSRC(){
 
-int SSRC::getState()
-{
+}
+void SSRC::setState(states newState){
+
+}
+int SSRC::getState(){
     return state;
 }
-void SSRC::stateMachine()
-{
-    while (true)
-    {
-        switch (this->state)
-        {
+void SSRC::stateMachine(){
+    switch(state){
         case initialize:
             accelerometer.SetupData();
             accelerometer.SetupSleep();
@@ -63,14 +57,12 @@ void SSRC::stateMachine()
             //  }
             break;
         case scrambling:
-            Serial.print("Scramble\n");
-            accelerometer.ReadData();
+            scramble();
 
-            if (accelerometer.idleGet())
-                this->state = idle;
-            break;
-            // scramble();
-            // go to computing when it is put on a table for 5 seconds
+            if(test_rotations > 5){
+                state = computing;
+            }
+            //go to computing when it is put on a table for 5 seconds
             break;
         case computing:
             algo.solveCube();
@@ -90,80 +82,74 @@ void SSRC::stateMachine()
             break;
         case solved:
             break;
-        }
     }
 };
-void SSRC::scramble()
-{
-    // for(int i = 1; i < 1;i++){
-    //             int rotation = motors[i].checkRotation();
-    //             Serial.print("motor: ");
-    //             Serial.print(i);
-    //             Serial.println(" rotation Detected");
-    //             switch(rotation){
-    //                 case 0:
-    //                     break;
-    //                 case 1:
-    //                     algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //                 case 2:
-    //                     algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //                     algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //                 case 3:
-    //                     algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //             }
-    //             if(rotation == 1){
-    //                 algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //             }else if(rotation == 2){
-    //                 algo.rotateFaceClockwise(algo.intToCubeFace(i));
-    //             }
-    //         }
-    //         delay(250);
+void SSRC::scramble(){
     int rotation = motors[0].checkRotation();
-    if (rotation > 0)
-    {
+    if(rotation > 0){
         Serial.print("motor: ");
         Serial.print(1);
         Serial.println(" rotation Detected");
-        delay(500);
+        delay(100);
     }
-    switch (rotation)
+    switch(rotation)
     {
-    case 0:
-        break;
-    case 1:
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-    case 2:
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-        algo.rotateFaceClockwise(algo.intToCubeFace(1));
-    case 3:
-        algo.rotateFaceCounterClockwise(algo.intToCubeFace(1));
+        case 0:
+            break;
+        case 1:
+            algo.rotateFaceClockwise(algo.intToCubeFace(2));
+            algo.printCube();
+            test_rotations++;
+            break;
+        case 3:
+            algo.rotateFaceCounterClockwise(algo.intToCubeFace(2));
+            algo.printCube();
+            test_rotations++;
+            break;
     }
-    // algo.printCube();
+    //Serial.print("rotations: ");
+    //Serial.println(test_rotations);
     delay(100);
 }
-void SSRC::resolve()
-{
+void SSRC::resolve(){
+    for (const std::string& value : algo.solveQueue) {
+        //std::cout << value << ",";
+        std::string turnValue = value.c_str();
+        
+        if (turnValue == "F") { motors[0].moveClockwise(); }
+        else if (turnValue == "'F") { motors[0].moveCounterClockwise(); }
+        else if (turnValue == "L") { motors[1].moveClockwise(); }
+        else if (turnValue == "'L") { motors[1].moveCounterClockwise(); }
+        else if (turnValue == "R") { motors[2].moveClockwise(); }
+        else if (turnValue == "'R") { motors[2].moveCounterClockwise(); }
+        else if (turnValue == "B") { motors[3].moveClockwise(); }
+        else if (turnValue == "'B") { motors[3].moveCounterClockwise(); }
+        else if (turnValue == "U") { motors[4].moveClockwise(); }
+        else if (turnValue == "'U") { motors[4].moveCounterClockwise(); }
+        else if (turnValue == "D") { motors[5].moveClockwise(); }
+        else if (turnValue == "'D") { motors[5].moveCounterClockwise(); }
+            
+    }
 }
-void SSRC::testEncoder()
-{
+void SSRC::testEncoder(){
     motors[0].testRotate();
-    // delay(250);
+    //delay(250);
 }
-void SSRC::testMotor()
-{
+void SSRC::testMotor(){
     motors[0].moveClockwise();
     delay(2000);
     motors[0].moveClockwise();
+
     delay(2000);
     motors[0].moveCounterClockwise();
     delay(2000);
     motors[0].moveClockwise();
     delay(2000);
 }
-void SSRC::init()
-{
+void SSRC::init(){
     // for(int i = 1; i < 6; i++){
     //     motors[i - 1].init(1,i);
     // }
-    motors[0].init(1, 1);
+    motors[0].init(1,1);
+    
 }

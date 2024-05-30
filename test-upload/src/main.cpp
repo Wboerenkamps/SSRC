@@ -30,10 +30,10 @@ void setup()
 
 void loop()
 {    
-    SSRC ssrc;
 
-    ssrc.stateMachine();
-    
+    cube.stateMachine();
+    //cube.testEncoder();
+    //cube.scramble();
     // motor.setPosition(1);
     // motor.readStatus();
     // delay(2000);

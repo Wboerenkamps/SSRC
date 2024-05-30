@@ -22,7 +22,7 @@ class Encoder {
         int rawAngle; //final raw angle 
         float degAngle = -1; //raw angle in degrees (360/4096 * [value between 0-4095])
 
-        int quadrantNumber, previousquadrantNumber; //quadrant IDs
+        int quadrantNumber = 1, previousquadrantNumber = 1; //quadrant IDs
         float numberofTurns = 0; //number of turns
         float correctedAngle = 0; //tared angle - based on the startup value
         float startAngle = 0; //starting angle

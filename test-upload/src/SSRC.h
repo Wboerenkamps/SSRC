@@ -27,6 +27,7 @@ class SSRC{
         states state = initialize;
         Motor motors[6];
         Cfop algo;
+        int test_rotations = 0;
 
         Accelerometer accelerometer;
         
