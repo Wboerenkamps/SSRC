@@ -17,21 +17,22 @@ void setup()
 
     // Serial.begin(115200); //start serial - tip: don't use serial if you don't need it (speed considerations)
     // Wire.begin(SDA,SCL); //start i2C  
-    // Wire.setClock(800000L); //fast clock
+    Wire.setClock(800000L); //fast clock
     // sleep(5);
     //motor.readStatus();
     // encoder.init();
     //motor.init(1,1);
     //cube.init();
     //motor.rotate(3,6);
-    //delay(1000);
-    //cube.init();
+    delay(5000);
+    cube.init();
 }
 
 void loop()
 {    
-
-    cube.stateMachine();
+    //cube.demo();
+    cube.testEncoder();
+    //cube.stateMachine();
     //cube.testEncoder();
     //cube.scramble();
     // motor.setPosition(1);

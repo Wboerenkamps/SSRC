@@ -12,11 +12,62 @@ void SSRC::setState(states newState){
 int SSRC::getState(){
     return state;
 }
+void SSRC::demo(){
+    switch(state){
+        case initialize:
+            this->init();
+            state = idle;
+            Serial.print("Init\n");
+            break;
+        case idle:
+            delay(100);
+
+            Serial.print("IDLE\n");
+            //Serial.print(accelerometer.idleGet());
+            //Serial.println();
+            //accelerometer.ReadData();
+            //if (!accelerometer.idleGet())
+            //    this->state = scrambling;
+            //if (accelerometer.solveGet())
+            state = scrambling;
+            break;
+        case scrambling:
+            scramble();
+            //accelerometer.ReadData();
+            //if(accelerometer.idleGet()){
+            //    this->state= idle;
+            //}
+            if(test_rotations > 5){
+                state = computing;
+            }
+            //go to computing when it is put on a table for 5 seconds
+            break;
+        case computing:
+            algo.solveCube();
+            algo.simplifyQueue();
+            algo.printQueue();
+            // when done go to
+            state = resolving;
+            break;
+        case resolving:
+            //accelerometer.solveSet(false);
+            //accelerometer.scrambleSet(false);
+            Serial.println("resolving....");
+            resolve();
+            state = idle;
+            break;
+        case interrupted:
+            break;
+        case solved:
+            break;
+    }
+}
 void SSRC::stateMachine(){
     switch(state){
         case initialize:
             accelerometer.SetupData();
             accelerometer.SetupSleep();
+            this->init();
             state = idle;
             Serial.print("Init\n");
             break;
@@ -31,60 +82,63 @@ void SSRC::stateMachine(){
                 this->state = scrambling;
             if (accelerometer.solveGet())
                 state = resolving;
-
-            // switch to scamble when the atleast 1 motor is turned in a direction
-            //  for(int i = 0; i < 6;i++){
-            //      int rotation = motors[i].checkRotation();
-            //      switch(rotation){
-            //          case 0:
-            //              break;
-            //          case 1:
-            //              algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //              state = scrambling;
-            //          case 2:
-            //              algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //              algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //              state = scrambling;
-            //          case 3:
-            //              algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //              state = scrambling;
-            //      }
-            //      if(rotation == 1){
-            //          algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //      }else if(rotation == 2){
-            //          algo.rotateFaceClockwise(algo.intToCubeFace(i));
-            //      }
-            //  }
             break;
         case scrambling:
             scramble();
-
-            if(test_rotations > 5){
-                state = computing;
+            accelerometer.ReadData();
+            if(accelerometer.idleGet()){
+                this->state= idle;
             }
+            // if(test_rotations > 5){
+            //     state = computing;
+            // }
             //go to computing when it is put on a table for 5 seconds
             break;
         case computing:
             algo.solveCube();
             // when done go to
+            state = resolving;
             break;
         case resolving:
+            //#TODO resume function 
             accelerometer.solveSet(false);
             accelerometer.scrambleSet(false);
-            for (int i = 0; i < 5; i++)
-            {
-                delay(500);
-                Serial.print("Solving\n");
-            }
+            resolve();
             state = idle;
             break;
         case interrupted:
+            //#TODO pickup implementation
             break;
         case solved:
+            //#TODO solved implementation
             break;
     }
 };
 void SSRC::scramble(){
+    // for(int i = 0; i < 6;i++){
+    //     int rotation = motors[i].checkRotation();
+    //     if(rotation > 0){
+    //         Serial.print("motor: ");
+    //         Serial.print(1);
+    //         Serial.println(" rotation Detected");
+    //         delay(100);
+    //     }
+    //     switch(rotation)
+    //     {
+    //         case 0:
+    //             break;
+    //         case 1:
+    //             algo.rotateFaceClockwise(algo.intToCubeFace(i));
+    //             algo.printCube();
+    //             test_rotations++;
+    //             break;
+    //         case 3:
+    //             algo.rotateFaceCounterClockwise(algo.intToCubeFace(i));
+    //             algo.printCube();
+    //             test_rotations++;
+    //             break;
+    //     }
+    // }
     int rotation = motors[0].checkRotation();
     if(rotation > 0){
         Serial.print("motor: ");
@@ -97,12 +151,12 @@ void SSRC::scramble(){
         case 0:
             break;
         case 1:
-            algo.rotateFaceClockwise(algo.intToCubeFace(2));
+            algo.rotateFaceClockwise(algo.intToCubeFace(0));
             algo.printCube();
             test_rotations++;
             break;
         case 3:
-            algo.rotateFaceCounterClockwise(algo.intToCubeFace(2));
+            algo.rotateFaceCounterClockwise(algo.intToCubeFace(0));
             algo.printCube();
             test_rotations++;
             break;

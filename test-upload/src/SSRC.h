@@ -23,6 +23,7 @@ class SSRC{
         void scramble();
         void resolve();
         void init();
+        void demo();
     private:
         states state = initialize;
         Motor motors[6];
