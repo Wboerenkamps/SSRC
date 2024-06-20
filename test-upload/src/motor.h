@@ -1,7 +1,7 @@
 #define WRITE_ADDRESS 0xC0
 #define READ_ADDRESS 0xC1
 #define VoltageValue 0x3E
-#define MOTOR_ADRESS 0x60
+#define MOTOR_ADRESS 0x64
 #include <Arduino.h>
 #include <Wire.h> 
 #include "encoder.h"

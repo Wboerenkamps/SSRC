@@ -48,7 +48,7 @@ class Accelerometer {
         int ADXL345 = 0x53;
         int SDA = 6;
         int SCL = 7;
-        int buzzer = 8;
+        int buzzer = 8; 
         int moveLed = 9;
 
         uint16_t POWER_CTL = 0x2D;
