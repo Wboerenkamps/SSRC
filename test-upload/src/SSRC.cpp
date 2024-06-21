@@ -186,7 +186,12 @@ void SSRC::resolve(){
     }
 }
 void SSRC::testEncoder(){
-    motors[0].testRotate();
+    for(int i = 0; i < 5;i++){
+        Serial.print("encoder: ");
+        Serial.print(i);
+        Serial.print(" value: ");
+        Serial.println(motors[i].getPosition());
+    }
     //delay(250);
 }
 void SSRC::testMotor(){
@@ -201,9 +206,9 @@ void SSRC::testMotor(){
     delay(2000);
 }
 void SSRC::init(){
-    // for(int i = 1; i < 6; i++){
-    //     motors[i - 1].init(1,i);
+    // for(int i = 0; i < 5; i++){
+    //     motors[0].init(1,i);
     // }
-    motors[0].init(1,1);
+    motors[0].init(1,0);
     
 }

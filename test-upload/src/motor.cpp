@@ -6,7 +6,7 @@ Motor::~Motor(){
 
 }
 int Motor::getPosition(){
-    return 1;
+    return encoder.correctAngle();
 }
 void Motor::clearFault(){
     Wire.beginTransmission(MOTOR_ADRESS);
@@ -249,7 +249,7 @@ int Motor::readStatus(){
 void Motor::init(int motorAddress, int encoderAddress){
     this->motorAddress = motorAddress;
     this->encoderAddress = encoderAddress;
-    this->rotate(3,63);
-    //encoder.init(encoderAddress);
+    //this->rotate(3,63);
+    encoder.init(encoderAddress);
     
 }

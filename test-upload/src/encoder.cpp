@@ -8,11 +8,15 @@ Encoder::~Encoder(){
 void Encoder::init(int address){
 
   this->address = address;
-  Serial.println("encoder init");
+  Serial.print("start init encoder: ");
+  Serial.print(address);
+  selectChannel();
   checkMagnetPresence(); //check the magnet (blocks until magnet is found)
   readRawAngle(); //make a reading so the degAngle gets updated
   //startAngle = degAngle + 45; //update startAngle with degAngle - for taring
   startAngle = degAngle;
+  Serial.print("successfull init encoder: ");
+  Serial.println(address);
 }
 float Encoder::readRawAngle()
 { 
@@ -169,7 +173,7 @@ void Encoder::checkMagnetPresence()
 
     Serial.print("Magnet status: ");
     Serial.println(magnetStatus, BIN); //print it in binary so you can compare it to the table (fig 21)      
-    
+    sleep(1);
   }      
   
   //Status register output: 0 0 MD ML MH 0 0 0  
