@@ -27,6 +27,7 @@ void setup()
     delay(5000);
     cube.init();
     //cube.testSolve();
+    
 }
 
 void loop()

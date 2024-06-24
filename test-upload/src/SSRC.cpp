@@ -197,16 +197,25 @@ void SSRC::testEncoder(){
     //delay(250);
 }
 void SSRC::testMotor(){
-
-    delay(2000);
-    motors[0].moveClockwise();
-    delay(2000);
-    motors[0].moveClockwise();
-    delay(2000);
-    motors[0].moveCounterClockwise();
-    delay(2000);
-    motors[0].moveClockwise();
-    delay(2000);
+    Serial.println("test motor");
+    motors[0].readStatus();
+    motors[0].rotate(1, 40);
+    delay(1000);
+    motors[0].rotate(3, 40);
+    delay(1000);
+    motors[0].rotate(2, 40);
+    delay(1000);
+    motors[0].rotate(3, 40);
+    delay(1000);
+    // delay(2000);
+    // motors[0].moveClockwise();
+    // delay(2000);
+    // motors[0].moveClockwise();
+    // delay(2000);
+    // motors[0].moveCounterClockwise();
+    // delay(2000);
+    // motors[0].moveClockwise();
+    // delay(2000);
 }
 void SSRC::init(){
     // for(int i = 1; i < 6; i++){
