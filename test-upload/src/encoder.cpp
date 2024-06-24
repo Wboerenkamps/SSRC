@@ -9,6 +9,8 @@ void Encoder::init(int address){
 
   this->address = address;
   Serial.println("encoder init");
+  Serial.print("address: ");
+  Serial.println(address);
   checkMagnetPresence(); //check the magnet (blocks until magnet is found)
   readRawAngle(); //make a reading so the degAngle gets updated
   //startAngle = degAngle + 45; //update startAngle with degAngle - for taring
@@ -79,8 +81,8 @@ float Encoder::correctAngle() {
     }
 
       // Print the corrected/tared angle
-      Serial.print("Corrected angle: ");
-      Serial.println(correctedAngle, 2);
+      //Serial.print("Corrected angle: ");
+      //Serial.println(correctedAngle, 2);
     // Check if the absolute difference is within the acceptable range
 
   // Return the corrected angle

@@ -1,4 +1,5 @@
 #include "motor.h"
+
 Motor::Motor(){
     motorVoltageMode = VoltageValue;
 }
@@ -61,7 +62,7 @@ void Motor::testRotate(){
     encoder.correctAngle();
     delay(20);
 }
-void Motor::setPosition(int pos,int dir) {
+void Motor::setPosition(int pos) {
     float targetAngle;
     switch (pos) {
         case 1:
@@ -85,77 +86,82 @@ void Motor::setPosition(int pos,int dir) {
             return;
     }
     
-    moveToAngle(targetAngle, dir);
+    moveToAngle(targetAngle);
     Serial.println("Position reached");
 }
 
-void Motor::moveToAngle(float targetAngle,int dir) {
-    const float THRESHOLD = 5.0; // Define a threshold for the target angle
+void Motor::moveToAngle(float targetAngle) {
+    const float THRESHOLD = 1.0; // Define a threshold for the target angle
     const float MAX_SPEED = 56;  // Define maximum motor speed
     const float MIN_SPEED = 6;  // Define minimum motor speed
-    const float MAX_INTEGRAL = 100; // Define maximum integral term to prevent windup
+   
 
     while (true) {
         float angle = encoder.correctAngle();
         float error = targetAngle - angle;
         // Serial.print("error: ");
-        // Serial.println(error);
-        // Serial.print("target: ");
-        // Serial.println(targetAngle);
-        // if (error > 180) {
-        //     error -= 360;
-        // } else if (error < -180) {
-        //     error += 360;
-        // }
+        //Serial.println(error);
+        
 
-        // integral += error;
-
-        // Prevent integral windup
-        // if (integral > MAX_INTEGRAL) integral = MAX_INTEGRAL;
-        // if (integral < -MAX_INTEGRAL) integral = 0;
-
-        // float derivative = error - previousError;
-        // float raw_output = Kp * error + Ki * integral + Kd * derivative;
-
-        // // Clamp the raw output to the range -100 to 100
-        // if (raw_output > 100) raw_output = 100;
-        // if (raw_output < 0) raw_output = 0;
-
-        //Serial.print("output: ");
-        //Serial.println(raw_output);
-
-        // Update the previous error
+        // //Update the previous error
         // previousError = error;
-
-        // // Check if the absolute error is within the threshold to consider the angle reached
+        int speed = PID(targetAngle,angle);
         if (abs(error) < THRESHOLD) {
-            this->rotate(3, 55);
-            this->rotate(4, 55); 
+            this->rotate(3, 40);
+            this->rotate(4, 40); 
             
             Serial.println("position reached");
             delay(1000);
-            // int starttime = millis();
-            // int endtime = starttime;
-            // while ((endtime - starttime) <=1000) // do this loop for up to 1000mS
-            // {           
-            //     float angle = encoder.correctAngle();
-            //     delay(20);
-            //     endtime = millis();
-            // }
             break;
         }
         // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
         //int output = mapOutputToSpeed(abs(raw_output), 0, 100, MIN_SPEED, MAX_SPEED);
         delay(20);
-        if (dir == 1) {
-            this->rotate(FORWARD, 10);
-        } else if(dir == 2) {
-            this->rotate(BACKWARDS, 10); // Pass positive speed value
+        if (speed > 0) {
+            this->rotate(FORWARD, abs(speed));
+        } else if(speed < 0) {
+            this->rotate(BACKWARDS, abs(speed)); // Pass positive speed value
         }
         
     }
 }
+float Motor::PID(float targetAngle, float angle) {
+    const float MAX_INTEGRAL = 50; // Define maximum integral term to prevent windup
+    float error = targetAngle - angle;
+    if (error > 180) {
+        error -= 360;
+    } else if (error < -180) {
+        error += 360;
+    }
+    // Serial.print("target: ");
+    // Serial.println(targetAngle);
 
+    integral += error;
+
+    // Prevent integral windup
+    if (integral > MAX_INTEGRAL) integral = MAX_INTEGRAL;
+    if (integral < -MAX_INTEGRAL) integral = -MAX_INTEGRAL;
+
+    float derivative = error - previousError;
+    float raw_output = Kp * error + Ki * integral + Kd * derivative;
+
+    // Avoid the deadzone by adjusting clamping
+    if (raw_output > 50) raw_output = 50;
+    else if (raw_output < -50) raw_output = -50;
+    else if (raw_output > -8 && raw_output < 8) {
+        // Set the raw output to either -8 or 8 based on the error's direction
+        if (raw_output >= 0) raw_output = 8;
+        else raw_output = -8;
+    }
+
+    Serial.print("output: ");
+    Serial.println(raw_output);
+
+    // Update previousError
+    previousError = error;
+
+    return raw_output;
+}
 void Motor::moveClockwise(){
     int newPos;
     if(this->position == 4){
@@ -165,7 +171,7 @@ void Motor::moveClockwise(){
     }
     Serial.print("clockwise to: ");
     Serial.println(newPos);
-    this->setPosition(newPos,1);
+    this->setPosition(newPos);
     
     
     position = newPos;
@@ -180,7 +186,7 @@ void Motor::moveCounterClockwise(){
     Serial.print("counter clockwise to: ");
     Serial.println(newPos);
     delay(1000);
-    this->setPosition(newPos,2);
+    this->setPosition(newPos);
     
     
     position = newPos;
@@ -247,6 +253,7 @@ int Motor::readStatus(){
     return 1;
 }
 void Motor::init(int motorAddress, int encoderAddress){
+    
     this->motorAddress = motorAddress;
     this->encoderAddress = encoderAddress;
     this->rotate(3,63);

@@ -26,12 +26,15 @@ void setup()
     //motor.rotate(3,6);
     delay(5000);
     cube.init();
+    //cube.testSolve();
 }
 
 void loop()
 {    
+    cube.testMotor();
     //cube.demo();
-    cube.testEncoder();
+    //cube.scramble();
+    //cube.testEncoder();
     //cube.stateMachine();
     //cube.testEncoder();
     //cube.scramble();

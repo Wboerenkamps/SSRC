@@ -12,6 +12,13 @@ void SSRC::setState(states newState){
 int SSRC::getState(){
     return state;
 }
+void SSRC::testSolve(){
+    algo.shuffleCube();
+    algo.printCubeInFormat();
+    algo.solveCube();
+    algo.simplifyQueue();
+    algo.printQueue();
+}
 void SSRC::demo(){
     switch(state){
         case initialize:
@@ -190,10 +197,11 @@ void SSRC::testEncoder(){
     //delay(250);
 }
 void SSRC::testMotor(){
+
+    delay(2000);
     motors[0].moveClockwise();
     delay(2000);
     motors[0].moveClockwise();
-
     delay(2000);
     motors[0].moveCounterClockwise();
     delay(2000);

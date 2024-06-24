@@ -24,6 +24,7 @@ class SSRC{
         void resolve();
         void init();
         void demo();
+        void testSolve();
     private:
         states state = initialize;
         Motor motors[6];
