@@ -8,8 +8,9 @@ Accelerometer::~Accelerometer() {}
 
 void Accelerometer::Setup()
 {
-    pinMode(buzzer, OUTPUT);
-    pinMode(moveLed, OUTPUT);
+    Serial.print("setup start \n");
+    // pinMode(buzzer, OUTPUT);
+    // pinMode(moveLed, OUTPUT);
     Serial.begin(115200);
     Wire.begin(SDA, SCL);
 
@@ -146,7 +147,15 @@ byte Accelerometer::i2cRead(uint16_t deviceAddress, uint16_t registerAddress)
     Wire.requestFrom(deviceAddress, 1);
     delay(10);
     return Wire.read();
-}
+}    
+
+// Wire.beginTransmission(0x0C);
+    // Wire.write(0x01);
+    // Wire.endTransmission();
+    // Wire.requestFrom(MOTOR_ADRESS,1);
+    // while(Wire.available() == 0); //wait until it becomes available 
+    // byte status = Wire.read();
+    // Serial.println(status,BIN);
 
 float Accelerometer::convertAxisData(byte value0, byte value1)
 {

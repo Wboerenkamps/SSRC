@@ -1,5 +1,7 @@
 #include "SSRC.h"
 #include "string"
+
+
 SSRC::SSRC(){
 
 }
@@ -71,6 +73,7 @@ void SSRC::demo(){
 }
 void SSRC::stateMachine(){
     switch(state){
+
         case initialize:
             accelerometer.SetupData();
             accelerometer.SetupSleep();
@@ -78,9 +81,9 @@ void SSRC::stateMachine(){
             state = idle;
             Serial.print("Init\n");
             break;
+
         case idle:
             delay(100);
-
             Serial.print("IDLE\n");
             Serial.print(accelerometer.idleGet());
             Serial.println();
@@ -90,6 +93,7 @@ void SSRC::stateMachine(){
             if (accelerometer.solveGet())
                 state = resolving;
             break;
+
         case scrambling:
             scramble();
             accelerometer.ReadData();
@@ -101,11 +105,13 @@ void SSRC::stateMachine(){
             // }
             //go to computing when it is put on a table for 5 seconds
             break;
+
         case computing:
             algo.solveCube();
             // when done go to
             state = resolving;
             break;
+
         case resolving:
             //#TODO resume function 
             accelerometer.solveSet(false);
@@ -113,12 +119,15 @@ void SSRC::stateMachine(){
             resolve();
             state = idle;
             break;
+
         case interrupted:
             //#TODO pickup implementation
             break;
+
         case solved:
             //#TODO solved implementation
             break;
+
     }
 };
 void SSRC::scramble(){
@@ -197,8 +206,9 @@ void SSRC::testEncoder(){
     //delay(250);
 }
 void SSRC::testMotor(){
-    Serial.println("test motor");
-    motors[0].readStatus();
+    delay(10);
+    i2c.write(MOTOR_ADRESS, 0x01, 0x80);
+    
     motors[0].rotate(1, 40);
     delay(1000);
     motors[0].rotate(3, 40);
@@ -207,6 +217,8 @@ void SSRC::testMotor(){
     delay(1000);
     motors[0].rotate(3, 40);
     delay(1000);
+   
+   
     // delay(2000);
     // motors[0].moveClockwise();
     // delay(2000);
@@ -216,8 +228,10 @@ void SSRC::testMotor(){
     // delay(2000);
     // motors[0].moveClockwise();
     // delay(2000);
+    motors[0].readStatus();
 }
 void SSRC::init(){
+    Serial.print("init start");
     // for(int i = 1; i < 6; i++){
     //     motors[i - 1].init(1,i);
     // }
