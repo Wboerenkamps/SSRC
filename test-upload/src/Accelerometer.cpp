@@ -9,10 +9,8 @@ Accelerometer::~Accelerometer() {}
 void Accelerometer::Setup()
 {
     Serial.print("setup start \n");
-    // pinMode(buzzer, OUTPUT);
-    // pinMode(moveLed, OUTPUT);
-    Serial.begin(115200);
-    Wire.begin(SDA, SCL);
+
+
 
     SetupData();
     SetupSleep();

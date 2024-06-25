@@ -17,8 +17,7 @@ class SSRC{
     public:
         SSRC();
         virtual ~SSRC();
-        void setState(states);
-        int getState();
+
         void stateMachine();
         void testMotor();
         void testEncoder();

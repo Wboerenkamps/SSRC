@@ -1,54 +1,38 @@
-//#include <Arduino.h>
-//#include <Wire.h> //This is for i2C
-// #include "encoder.h"
-//#include "motor.h"
 #include "SSRC.h"
 
-#define SDA 6
-#define SCL 7
-#define codeLed 6
-// Encoder encoder;
-//Motor motor;
+
 SSRC cube;
+i2cFunction i2c;
+
 void setup()
 {
     Serial.begin(115200);
+    i2c.wireInit();
     Wire.begin(SDA,SCL);
     delay(5000);
-    Serial.println("start");
-    //pinMode(codeLed, OUTPUT);
 
-    // Serial.begin(115200); //start serial - tip: don't use serial if you don't need it (speed considerations)
-    // Wire.begin(SDA,SCL); //start i2C  
-    Wire.setClock(400000); //fast clock
-    // sleep(5);
-    //motor.readStatus();
-    // encoder.init();
-    //motor.init(1,1);
-    //cube.init();
-    //motor.rotate(3,6);
-    //delay(5000);
-    //Serial.print("init start\n");
+  
     cube.init();
-    //cube.testSolve();
     delay(5000);
     
+    Serial.print("Setup complete\n");
+
+    // Wire.setClock(400000); not sure if this is needed
 }
 
 void loop()
 {  
-    // Accelerometer accel;
-    // accel.Setup();
+    // Serial.print("Start of loop\n");
 
-    Serial.print("Loop start\n");
-
+    cube.testEncoder();
+    delay(1000);
     //cube.testMotor();
     //digitalWrite(codeLed, HIGH);
    
     //digitalWrite(codeLed, LOW);
     //cube.demo();
     //cube.scramble();
-    cube.testEncoder();
+ 
     //cube.stateMachine();
     //cube.testEncoder();
     //cube.scramble();
@@ -70,4 +54,5 @@ void loop()
     //cube.testMotor();
     //cube.testEncoder();
 
+    // Serial.print("Loop completed\n");
 }
