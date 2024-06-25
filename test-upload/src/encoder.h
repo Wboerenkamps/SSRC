@@ -1,5 +1,5 @@
-#include <Arduino.h> 
-#include <Wire.h>
+#include "i2cFunction.h"
+
 #define MUX_ADDRESS 0x70
 class Encoder {
     public:
@@ -30,4 +30,6 @@ class Encoder {
         float totalAngle = 0; //total absolute angular displacement
         float previoustotalAngle = 0; //for the display printing
 
+        i2cFunction i2c;
+        
 };

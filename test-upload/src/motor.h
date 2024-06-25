@@ -1,10 +1,9 @@
 
 #define VoltageValue 0x3E
 #define MOTOR_ADRESS 0x64
-#include <Arduino.h>
-#include <Wire.h> 
+
 #include "encoder.h"
-#include "i2cFunction.h"
+
 #define FORWARD 1
 #define BACKWARDS 2
 class Motor 
@@ -12,10 +11,13 @@ class Motor
     public:
         Motor();
         virtual ~Motor();
+
         int getPosition();
         void setPosition(int pos);
+
         int checkRotation();
-        int readStatus();
+        int readDRVFaultRegister();
+        void clearDRVFaultRegister();
         void clearFault();
         void testRotate();
         void moveToAngle(float targetAngle);
