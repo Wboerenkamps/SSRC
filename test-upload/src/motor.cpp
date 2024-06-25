@@ -20,6 +20,7 @@ void Motor::clearFault(){
     Wire.endTransmission();
 }
 void Motor::rotate(int dir,int speed) {
+    //Serial.println(encoder.correctAngle());
     byte voltage = speed;
     byte directionByte = 0b00;
     switch (dir) {
@@ -48,14 +49,17 @@ void Motor::rotate(int dir,int speed) {
     //Serial.print("write byte:");
     //Serial.println(writeByte, BIN);
     
-    Wire.beginTransmission(MOTOR_ADRESS);
+    i2c.write(MOTOR_ADRESS, 0x00, writeByte);
+
+
+    // Wire.beginTransmission(MOTOR_ADRESS);
     
-    Wire.write(0x00); // Select control register
-    //byte controlByte = 0b11111101; // Assuming this sets direction and other control bits
+    // Wire.write(0x00); // Select control register
+    // //byte controlByte = 0b11111101; // Assuming this sets direction and other control bits
     
-    Wire.write(writeByte);
+    // Wire.write(writeByte);
     
-    Wire.endTransmission();
+    // Wire.endTransmission();
 }
 void Motor::testRotate(){
     //this->rotate(FORWARD,8);
@@ -91,13 +95,14 @@ void Motor::setPosition(int pos) {
 }
 
 void Motor::moveToAngle(float targetAngle) {
-    const float THRESHOLD = 1.0; // Define a threshold for the target angle
+    const float THRESHOLD = 5.0; // Define a threshold for the target angle
     const float MAX_SPEED = 56;  // Define maximum motor speed
     const float MIN_SPEED = 6;  // Define minimum motor speed
    
 
     while (true) {
         float angle = encoder.correctAngle();
+        Serial.println(angle);
         float error = targetAngle - angle;
         // Serial.print("error: ");
         //Serial.println(error);
@@ -117,11 +122,12 @@ void Motor::moveToAngle(float targetAngle) {
         // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
         //int output = mapOutputToSpeed(abs(raw_output), 0, 100, MIN_SPEED, MAX_SPEED);
         delay(20);
-        if (speed > 0) {
-            this->rotate(FORWARD, abs(speed));
-        } else if(speed < 0) {
-            this->rotate(BACKWARDS, abs(speed)); // Pass positive speed value
-        }
+        this->rotate(FORWARD, 8);
+        // if (speed > 0) {
+        //     this->rotate(FORWARD, abs(speed));
+        // } else if(speed < 0) {
+        //     this->rotate(BACKWARDS, abs(speed)); // Pass positive speed value
+        // }
         
     }
 }
@@ -243,12 +249,9 @@ int Motor::checkRotation() {
 }
 
 int Motor::readStatus(){
-    Wire.beginTransmission(MOTOR_ADRESS);
-    Wire.write(0x01);
-    Wire.endTransmission();
-    Wire.requestFrom(MOTOR_ADRESS,1);
-    while(Wire.available() == 0); //wait until it becomes available 
-    byte status = Wire.read();
+    
+    byte status = i2c.read(MOTOR_ADRESS, 0x01);
+    Serial.print("Status is: ");
     Serial.println(status,BIN);
     return 1;
 }
@@ -257,6 +260,6 @@ void Motor::init(int motorAddress, int encoderAddress){
     this->motorAddress = motorAddress;
     this->encoderAddress = encoderAddress;
     this->rotate(3,63);
-    //encoder.init(encoderAddress);
+    encoder.init(encoderAddress);
     
 }

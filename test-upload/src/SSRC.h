@@ -2,6 +2,8 @@
 #include "cfop.h"
 #include "Accelerometer.h"
 
+#define codeLed 6
+
 enum states {
     idle,
     scrambling,
@@ -32,5 +34,6 @@ class SSRC{
         int test_rotations = 0;
 
         Accelerometer accelerometer;
+        i2cFunction i2c;
         
 };

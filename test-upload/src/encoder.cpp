@@ -8,6 +8,7 @@ Encoder::~Encoder(){
 void Encoder::init(int address){
 
   this->address = address;
+  delay(20);
   Serial.println("encoder init");
   Serial.print("address: ");
   Serial.println(address);
@@ -81,8 +82,8 @@ float Encoder::correctAngle() {
     }
 
       // Print the corrected/tared angle
-      //Serial.print("Corrected angle: ");
-      //Serial.println(correctedAngle, 2);
+      Serial.print("Corrected angle: ");
+      Serial.println(correctedAngle, 2);
     // Check if the absolute difference is within the acceptable range
 
   // Return the corrected angle

@@ -6,6 +6,7 @@
 
 #define SDA 6
 #define SCL 7
+#define codeLed 6
 // Encoder encoder;
 //Motor motor;
 SSRC cube;
@@ -13,29 +14,41 @@ void setup()
 {
     Serial.begin(115200);
     Wire.begin(SDA,SCL);
+    delay(5000);
     Serial.println("start");
+    //pinMode(codeLed, OUTPUT);
 
     // Serial.begin(115200); //start serial - tip: don't use serial if you don't need it (speed considerations)
     // Wire.begin(SDA,SCL); //start i2C  
-    Wire.setClock(800000L); //fast clock
+    Wire.setClock(400000); //fast clock
     // sleep(5);
     //motor.readStatus();
     // encoder.init();
     //motor.init(1,1);
     //cube.init();
     //motor.rotate(3,6);
-    delay(5000);
+    //delay(5000);
+    //Serial.print("init start\n");
     cube.init();
     //cube.testSolve();
+    delay(5000);
     
 }
 
 void loop()
-{    
-    cube.testMotor();
+{  
+    // Accelerometer accel;
+    // accel.Setup();
+
+    Serial.print("Loop start\n");
+
+    //cube.testMotor();
+    //digitalWrite(codeLed, HIGH);
+   
+    //digitalWrite(codeLed, LOW);
     //cube.demo();
     //cube.scramble();
-    //cube.testEncoder();
+    cube.testEncoder();
     //cube.stateMachine();
     //cube.testEncoder();
     //cube.scramble();

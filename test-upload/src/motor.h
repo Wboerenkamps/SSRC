@@ -1,10 +1,10 @@
-#define WRITE_ADDRESS 0xC0
-#define READ_ADDRESS 0xC1
+
 #define VoltageValue 0x3E
 #define MOTOR_ADRESS 0x64
 #include <Arduino.h>
 #include <Wire.h> 
 #include "encoder.h"
+#include "i2cFunction.h"
 #define FORWARD 1
 #define BACKWARDS 2
 class Motor 
@@ -41,4 +41,5 @@ class Motor
         float previousError = 0;
         float integral = 0;
         int position = 1;
+        i2cFunction i2c;
 };
