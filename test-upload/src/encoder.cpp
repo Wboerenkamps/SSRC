@@ -31,45 +31,6 @@ float Encoder::readRawAngle()
   // Multiply the output of the encoder with 0.087890625
   degAngle = rawAngle * 0.087890625;
   return degAngle;
-  // // Check if the angle has transitioned from 360 to 0 or vice versa
-  // if (tempAngle - degAngle > 300) {
-  //   // If the angle transitioned from 360 to 0, add 360 to the temporary angle
-  //   tempAngle += 360;
-  // } else if (degAngle - tempAngle > 300) {
-  //   // If the angle transitioned from 0 to 360, subtract 360 from the temporary angle
-  //   tempAngle -= 360;
-  // }
-  // Serial.print("not cool angle: ");
-  //   Serial.println(tempAngle, 2);
-  // // Update degAngle if the difference is within the acceptable range or if it's the first reading (-1)
-  // float difference = abs(tempAngle - degAngle);
-  // if (difference <= 20 || degAngle == -1) {
-  //   degAngle = tempAngle;
-  //   // Print the corrected/tared angle
-
-
-
-
-  // Wire.beginTransmission(0x36); // connect to the sensor
-  // Wire.write(0x0D);             // figure 21 - register map: Raw angle (7:0)
-  // Wire.endTransmission();       // end transmission
-  // Wire.requestFrom(0x36, 1);    // request from the sensor
-
-  // while (Wire.available() == 0)
-  //   ;                    // wait until it becomes available
-  // lowbyte = Wire.read(); // Reading the data after the request
-
-  // 11:8 - 4 bits
-  // Wire.beginTransmission(0x36);
-  // Wire.write(0x0C); // figure 21 - register map: Raw angle (11:8)
-  // Wire.endTransmission();
-  // Wire.requestFrom(0x36, 1);
-
-  // while (Wire.available() == 0)
-  //   ;
-  // highbyte = Wire.read();
-
-
 }
 
 float Encoder::correctAngle()
