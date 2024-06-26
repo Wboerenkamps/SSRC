@@ -1,7 +1,14 @@
 #include "SSRC.h"
 #include "string"
 
-SSRC::SSRC() {}
+SSRC::SSRC() {
+    motorToEncoderMap[0x01] = 0xA1;
+    motorToEncoderMap[0x02] = 0xA2;
+    motorToEncoderMap[0x03] = 0xA3;
+    motorToEncoderMap[0x04] = 0xA4;
+    motorToEncoderMap[0x05] = 0xA5;
+    motorToEncoderMap[0x06] = 0xA6;
+}
 
 SSRC::~SSRC() {}
 
@@ -283,6 +290,10 @@ void SSRC::init()
     // for(int i = 1; i < 6; i++){
     //     motors[i - 1].init(1,i);
     // }
-
+    // int i = 0;
+    // for (const auto& pair : motorToEncoderMap) {
+    //     motors[0].init(pair.first,pair.second);
+    //     i++;
+    // }
     motors[0].init(1, 1);
 }

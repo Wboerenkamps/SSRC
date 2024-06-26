@@ -97,10 +97,9 @@ void Motor::setPosition(int pos)
 
 void Motor::moveToAngle(float targetAngle)
 {
-    const float THRESHOLD = 2.0; // Define a threshold for the target angle
-    const float MAX_SPEED = 56;  // Define maximum motor speed
-    const float MIN_SPEED = 6;   // Define minimum motor speed
+    
     integral = 0;
+
     while (true)
     {
         float angle = encoder.correctAngle();
@@ -112,24 +111,33 @@ void Motor::moveToAngle(float targetAngle)
         // //Update the previous error
         // previousError = error;
         int speed = PID(targetAngle, angle);
+        Serial.print("speed: ");
+        Serial.println(speed);
         if (abs(error) < THRESHOLD)
         {
-            this->rotate(3, 40);
-            this->rotate(4, 40);
-
-            Serial.println("position reached");
-            delay(1000);
-            break;
+            if(correctCount > 3){
+                this->rotate(3, 40);
+                this->rotate(4, 40);
+                correctCount = 0;
+                Serial.println("position reached");
+                delay(1000);
+                break;
+            }else{
+                correctCount++;
+            }
+            
+        }else{
+            correctCount = 0;
         }
         // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
         // int output = mapOutputToSpeed(abs(raw_output), 0, 100, MIN_SPEED, MAX_SPEED);
         delay(10);
-        this->rotate(FORWARD, 15);
-        // if (speed > 0) {
-        //     this->rotate(FORWARD, abs(speed));
-        // } else if(speed < 0) {
-        //     this->rotate(BACKWARDS, abs(speed)); // Pass positive speed value
-        // }
+        //this->rotate(FORWARD, 15);
+        if (speed > 0) {
+            this->rotate(BACKWARDS, abs(speed));
+        } else if(speed < 0) {
+            this->rotate(FORWARD, abs(speed)); // Pass positive speed value
+        }
     }
 }
 
@@ -156,19 +164,17 @@ float Motor::PID(float targetAngle, float angle)
 
     float derivative = error - previousError;
     float raw_output = Kp * error + Ki * integral + Kd * derivative;
-
-    // Avoid the deadzone by adjusting clamping
-    if (raw_output > 50)
-        raw_output = 50;
-    else if (raw_output < -50)
-        raw_output = -50;
-    else if (raw_output > -8 && raw_output < 8)
+    if (raw_output > MAX_SPEED)
+        raw_output = MAX_SPEED;
+    else if (raw_output < -MAX_SPEED)
+        raw_output = -MAX_SPEED;
+    else if (raw_output > -MIN_SPEED && raw_output < MIN_SPEED)
     {
         // Set the raw output to either -8 or 8 based on the error's direction
         if (raw_output >= 0)
-            raw_output = 8;
+            raw_output = MIN_SPEED;
         else
-            raw_output = -8;
+            raw_output = -MIN_SPEED;
     }
 
     Serial.print("output: ");

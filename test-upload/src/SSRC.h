@@ -1,7 +1,7 @@
 #include "motor.h"
 #include "cfop.h"
 #include "Accelerometer.h"
-
+#include <map>
 #define codeLed 6
 
 enum states {
@@ -34,5 +34,6 @@ class SSRC{
 
         Accelerometer accelerometer;
         i2cFunction i2c;
+        std::map<int, int> motorToEncoderMap;
         
 };

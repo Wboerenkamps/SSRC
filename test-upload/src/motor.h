@@ -31,9 +31,9 @@ class Motor
     private:
         int motorVoltageMode;
         Encoder encoder;
-        double Kp = 0.05;
+        double Kp = 2;
         double Ki = 0.01;
-        double Kd = 0.2;
+        double Kd = 0.1;
         int motorAddress;
         int encoderAddress;
 
@@ -42,6 +42,10 @@ class Motor
         // float Kd = 0.1; // Derivative gain
         float previousError = 0;
         float integral = 0;
+        int correctCount = 0;
+        const float THRESHOLD = 2.0; // Define a threshold for the target angle
+        const float MAX_SPEED = 56;  // Define maximum motor speed
+        const float MIN_SPEED = 7;   // Define minimum motor speed
         int position = 1;
         i2cFunction i2c;
 };
