@@ -23,10 +23,10 @@ void setup()
 void loop()
 {  
     // Serial.print("Start of loop\n");
-
+    cube.testMotor();
     cube.testEncoder();
     delay(1000);
-    //cube.testMotor();
+  
     //digitalWrite(codeLed, HIGH);
    
     //digitalWrite(codeLed, LOW);
