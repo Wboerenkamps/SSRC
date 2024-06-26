@@ -34,12 +34,7 @@ class Motor
         double Kp = 2;
         double Ki = 0.01;
         double Kd = 0.1;
-        int motorAddress;
-        int encoderAddress;
-
-        // float Kp = 1.0; // Proportional gain
-        // float Ki = 0.01; // Integral gain
-        // float Kd = 0.1; // Derivative gain
+        byte motorAddress;
         float previousError = 0;
         float integral = 0;
         int correctCount = 0;

@@ -13,7 +13,7 @@ void i2cFunction::wireInit()
 void i2cFunction::write(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value)
 {
     Serial.print("writing address: ");
-    Serial.print(deviceAddress);
+    Serial.print(deviceAddress,HEX);
     Serial.println();
     Wire.beginTransmission(deviceAddress);
     Wire.write(registerAddress);
@@ -36,7 +36,7 @@ byte i2cFunction::read(uint16_t deviceAddress, uint16_t registerAddress)
     while(Wire.available() == 0); 
 
     Serial.print("Read bytes: ");
-    Serial.print(requestBytes);
+    Serial.print(requestBytes,BIN);
     Serial.println();
 
     return Wire.read();

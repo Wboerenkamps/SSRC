@@ -26,6 +26,8 @@ class SSRC{
         void init();
         void demo();
         void testSolve();
+        void fullTest();
+        void testSingleMotor(int i,bool);
     private:
         states state = initialize;
         Motor motors[6];

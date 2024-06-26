@@ -9,7 +9,7 @@ Motor::~Motor() {}
 
 int Motor::getPosition()
 {
-    return 1;
+    return encoder.correctAngle();
 }
 
 
@@ -45,8 +45,9 @@ void Motor::rotate(int dir, int speed)
     byte writeByte = (voltage << 2) | directionByte;
     // Serial.print("write byte:");
     // Serial.println(writeByte, BIN);
-
-    i2c.write(MOTOR_ADRESS, 0x00, writeByte);
+    // Serial.print("motor address test: ");
+    // Serial.println(motorAddress,HEX);
+    i2c.write(this->motorAddress, 0x00, writeByte);
 
     // Wire.beginTransmission(MOTOR_ADRESS);
 
@@ -300,7 +301,7 @@ int Motor::checkRotation()
 
 int Motor::readDRVFaultRegister()
 {
-    byte status = i2c.read(MOTOR_ADRESS, 0x01);
+    byte status = i2c.read(motorAddress, 0x01);
 
     Serial.print("Status is: ");
     Serial.println(status, BIN);
@@ -310,13 +311,13 @@ int Motor::readDRVFaultRegister()
 
 void Motor::clearDRVFaultRegister()
 {
-    i2c.write(MOTOR_ADRESS, 0x01, 0x80);
+    i2c.write(motorAddress, 0x01, 0x80);
 }
 
 void Motor::init(int motorAddress, int encoderAddress)
 {
     this->motorAddress = motorAddress;
-    this->encoderAddress = encoderAddress;
     this->rotate(3, 63);
+    
     encoder.init(encoderAddress);
 }

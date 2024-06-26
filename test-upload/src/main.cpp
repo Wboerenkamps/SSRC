@@ -12,8 +12,7 @@ void setup()
     delay(5000);
 
   
-    cube.init();
-    delay(5000);
+    //cube.init();
     
     Serial.print("Setup complete\n");
 
@@ -23,36 +22,11 @@ void setup()
 void loop()
 {  
     // Serial.print("Start of loop\n");
-    cube.testMotor();
+    //cube.fullTest();
     //cube.testEncoder();
-    delay(1000);
-  
-    //digitalWrite(codeLed, HIGH);
-   
-    //digitalWrite(codeLed, LOW);
-    //cube.demo();
-    //cube.scramble();
- 
-    //cube.stateMachine();
-    //cube.testEncoder();
-    //cube.scramble();
-    // motor.setPosition(1);
-    // motor.readStatus();
-    // delay(2000);
-    // motor.clearFault();
-    // motor.setPosition(4);
-    // motor.readStatus();
-    // delay(2000);
-    // motor.setPosition(2);
-    // motor.readStatus();
-    
-    // delay(2000);
-    // motor.setPosition(4);
-    // motor.readStatus();
-    // delay(2000);
-    //cube.scramble();
     //cube.testMotor();
-    //cube.testEncoder();
+    cube.testSingleMotor(1,true);
+    delay(500);
 
     // Serial.print("Loop completed\n");
 }
