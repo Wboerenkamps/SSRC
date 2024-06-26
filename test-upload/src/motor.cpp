@@ -97,10 +97,10 @@ void Motor::setPosition(int pos)
 
 void Motor::moveToAngle(float targetAngle)
 {
-    const float THRESHOLD = 5.0; // Define a threshold for the target angle
+    const float THRESHOLD = 2.0; // Define a threshold for the target angle
     const float MAX_SPEED = 56;  // Define maximum motor speed
     const float MIN_SPEED = 6;   // Define minimum motor speed
-
+    integral = 0;
     while (true)
     {
         float angle = encoder.correctAngle();
@@ -123,8 +123,8 @@ void Motor::moveToAngle(float targetAngle)
         }
         // Map the raw output to the speed range (MIN_SPEED to MAX_SPEED)
         // int output = mapOutputToSpeed(abs(raw_output), 0, 100, MIN_SPEED, MAX_SPEED);
-        delay(20);
-        this->rotate(FORWARD, 8);
+        delay(10);
+        this->rotate(FORWARD, 15);
         // if (speed > 0) {
         //     this->rotate(FORWARD, abs(speed));
         // } else if(speed < 0) {

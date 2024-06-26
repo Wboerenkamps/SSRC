@@ -14,6 +14,8 @@ void Encoder::init(int address)
   readRawAngle();        // make a reading so the degAngle gets updated
   // startAngle = degAngle + 45; //update startAngle with degAngle - for taring
   startAngle = degAngle;
+  Serial.print("start angle: ");
+  Serial.println(startAngle);
 }
 float Encoder::readRawAngle()
 {

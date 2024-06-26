@@ -24,7 +24,7 @@ void loop()
 {  
     // Serial.print("Start of loop\n");
     cube.testMotor();
-    cube.testEncoder();
+    //cube.testEncoder();
     delay(1000);
   
     //digitalWrite(codeLed, HIGH);
