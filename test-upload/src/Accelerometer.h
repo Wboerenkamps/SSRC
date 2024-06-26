@@ -12,10 +12,12 @@ class Accelerometer {
         void Loop();
 
         void SetupData();
-        void ReadData();
-
         void SetupSleep();
+        void setupTap();
+
+        void ReadData();
         void ReadSleep();
+        void readTap();
 
         void i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value);
         byte i2cRead(uint16_t deviceAddress, uint16_t registerAddress);
@@ -59,11 +61,12 @@ class Accelerometer {
         // DOUBLE TAP SETUP
         int16_t THRESH_TAP = 0x1D;
         int16_t DUR = 0x21;
-        int16_t Latent = 0x22;
+        int16_t latent = 0x22;
         int16_t window = 0x23;
         int16_t tapAxes = 0x2A;
 
         int16_t INT_SOURCE = 0x30;        
+        int16_t INT_ENABLE = 0x2E;
 
         // DATA REGISTERS
         int16_t xDataReg0 = 0x32;

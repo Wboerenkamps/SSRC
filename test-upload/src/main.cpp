@@ -3,16 +3,16 @@
 
 SSRC cube;
 i2cFunction i2c;
+Accelerometer accel;
 
 void setup()
 {
     Serial.begin(115200);
     i2c.wireInit();
     Wire.begin(SDA,SCL);
-    delay(5000);
 
   
-    cube.init();
+    //cube.init();
     delay(5000);
     
     Serial.print("Setup complete\n");
@@ -22,8 +22,11 @@ void setup()
 
 void loop()
 {  
+    accel.Setup();
+
+
     // Serial.print("Start of loop\n");
-    cube.testMotor();
+    //cube.testMotor();
     //cube.testEncoder();
     delay(1000);
   

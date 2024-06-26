@@ -10,10 +10,9 @@ void Accelerometer::Setup()
 {
     Serial.print("setup start \n");
 
-
-
-    SetupData();
-    SetupSleep();
+    //SetupData();
+    //SetupSleep();
+    setupTap();
 
     Loop();
 }
@@ -22,13 +21,15 @@ void Accelerometer::Loop()
 {
     while (true)
     {
-        ReadData();
-        ReadSleep();
-        delay(50);
+        // ReadData();
+        // ReadSleep();
+        readTap();
+        delay(500);
     }
 }
 
-void Accelerometer::SetupSleep() {
+void Accelerometer::SetupSleep()
+{
     i2cWrite(ADXL345, activityThreshholdReg, 0x4F);
     i2cWrite(ADXL345, inactivityThreshholdReg, 0x10);
     i2cWrite(ADXL345, inactivityTimerReg, 0x3C);
@@ -38,23 +39,36 @@ void Accelerometer::SetupSleep() {
 void Accelerometer::SetupData()
 {
     // Chip setup
-    i2cWrite(ADXL345, POWER_CTL, 0x38);   // Turn on measure bit
-    i2cWrite(ADXL345, DATA_FORMAT, 0); // Set g range to 2g
-    i2cWrite(ADXL345, BW_RATE, 6);     // Set bandwidth and output data rate
+    i2cWrite(ADXL345, POWER_CTL, 0x38); // Turn on measure bit
+    i2cWrite(ADXL345, DATA_FORMAT, 0);  // Set g range to 2g
+    i2cWrite(ADXL345, BW_RATE, 6);      // Set bandwidth and output data rate
     callibrate();
 }
 
-void Accelerometer::ReadSleep() {
+void Accelerometer::setupTap()
+{
+    i2cWrite(ADXL345, THRESH_TAP, 0xCF);
+    i2cWrite(ADXL345, DUR, 0x10);
+    i2cWrite(ADXL345, latent, 0x10);
+    i2cWrite(ADXL345, window, 0x40);
+    i2cWrite(ADXL345, tapAxes, 0x07);
+    i2cWrite(ADXL345, INT_ENABLE, 0x60);
+    
+
+}
+
+void Accelerometer::ReadSleep()
+{
     byte x2 = i2cRead(ADXL345, 0x2B);
     byte x = i2cRead(ADXL345, INT_SOURCE);
-    Serial.print("Activity: " );
-    Serial.print(((x >> 4)  & 0x01));
+    Serial.print("Activity: ");
+    Serial.print(((x >> 4) & 0x01));
     Serial.print("     ");
-    Serial.print("Inacivity: " );
-    Serial.print(((x >> 3)  & 0x01));
+    Serial.print("Inacivity: ");
+    Serial.print(((x >> 3) & 0x01));
     Serial.println();
     Serial.print("Sleep bit: ");
-    Serial.print(((x2 >> 3)  & 0x01));
+    Serial.print(((x2 >> 3) & 0x01));
     Serial.println();
     delay(500);
 }
@@ -106,9 +120,9 @@ void Accelerometer::ReadData()
         tone(buzzer, 2000);
     }
 
-    if (ya <= yMotionThreshHoldMax && ya >= yMotionThreshHoldMin && 
-    xa <= xMotionThreshHoldMax && xa >= xMotionThreshHoldMin && 
-    za <= zMotionThreshHoldMax && za >= zMotionThreshHoldMin)
+    if (ya <= yMotionThreshHoldMax && ya >= yMotionThreshHoldMin &&
+        xa <= xMotionThreshHoldMax && xa >= xMotionThreshHoldMin &&
+        za <= zMotionThreshHoldMax && za >= zMotionThreshHoldMin)
     {
         idleCount++;
         if (idleCount >= 5)
@@ -128,6 +142,27 @@ void Accelerometer::ReadData()
     noTone(buzzer);
 }
 
+void Accelerometer::readTap()
+{
+    byte x = i2cRead(ADXL345, INT_SOURCE);
+    byte singleTap = (x >> 6) & 0x01;
+    byte doubleTap = (x >> 5) & 0x01;
+
+    Serial.print("Single tap Status: ");
+    Serial.print(singleTap);
+    Serial.println();
+
+    Serial.print("Double tap status: ");
+    Serial.print(doubleTap);
+    Serial.println();
+
+    // if(doubleTap == 1 || singleTap == 1) {
+    //     while (true) {
+    //         Serial.println("Motion detected");
+    //     }
+    // }
+}
+
 void Accelerometer::i2cWrite(uint16_t deviceAddress, uint16_t registerAddress, uint16_t value)
 {
     Wire.beginTransmission(deviceAddress);
@@ -145,15 +180,15 @@ byte Accelerometer::i2cRead(uint16_t deviceAddress, uint16_t registerAddress)
     Wire.requestFrom(deviceAddress, 1);
     delay(10);
     return Wire.read();
-}    
+}
 
 // Wire.beginTransmission(0x0C);
-    // Wire.write(0x01);
-    // Wire.endTransmission();
-    // Wire.requestFrom(MOTOR_ADRESS,1);
-    // while(Wire.available() == 0); //wait until it becomes available 
-    // byte status = Wire.read();
-    // Serial.println(status,BIN);
+// Wire.write(0x01);
+// Wire.endTransmission();
+// Wire.requestFrom(MOTOR_ADRESS,1);
+// while(Wire.available() == 0); //wait until it becomes available
+// byte status = Wire.read();
+// Serial.println(status,BIN);
 
 float Accelerometer::convertAxisData(byte value0, byte value1)
 {
@@ -170,7 +205,7 @@ float Accelerometer::convertAxisData(byte value0, byte value1)
 
 bool Accelerometer::callibrate()
 {
-    
+
     for (int i = 0; i < 100; i++)
     {
         byte x0 = i2cRead(ADXL345, xDataReg0);
@@ -187,7 +222,7 @@ bool Accelerometer::callibrate()
         byte z1 = i2cRead(ADXL345, zDataReg1);
 
         zaTotal += convertAxisData(z0, z1);
-        
+
         delay(10);
     }
 
@@ -207,32 +242,39 @@ bool Accelerometer::callibrate()
     return true;
 }
 
-void Accelerometer::idleSet(bool state) {
+void Accelerometer::idleSet(bool state)
+{
     idle = state;
 }
 
-void Accelerometer::scrambleSet(bool state) {
+void Accelerometer::scrambleSet(bool state)
+{
     scramble = state;
 }
 
-void Accelerometer::solveSet(bool state) {
+void Accelerometer::solveSet(bool state)
+{
     solve = state;
 }
 
-bool Accelerometer::idleGet() {
+bool Accelerometer::idleGet()
+{
     return idle;
 }
 
-bool Accelerometer::scrambleGet() {
+bool Accelerometer::scrambleGet()
+{
     return scramble;
 }
 
-bool Accelerometer::solveGet() {
+bool Accelerometer::solveGet()
+{
     return solve;
 }
 
-bool Accelerometer::sleepGet() {
+bool Accelerometer::sleepGet()
+{
     byte x = i2cRead(ADXL345, INT_SOURCE);
     byte x2 = i2cRead(ADXL345, 0x2B);
-    return  ((x2 >> 3)  & 0x01);
+    return ((x2 >> 3) & 0x01);
 }
