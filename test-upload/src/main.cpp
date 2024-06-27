@@ -25,7 +25,14 @@ void loop()
     //cube.fullTest();
     //cube.testEncoder();
     //cube.testMotor();
+    cube.testSingleMotor(0,true);
     cube.testSingleMotor(1,true);
+    cube.testSingleMotor(2,true);
+    cube.testSingleMotor(3,true);
+    cube.testSingleMotor(4,true);
+    cube.testSingleMotor(5,true);
+    //cube.testSingleMotor(0,true);
+    
     delay(500);
 
     // Serial.print("Loop completed\n");

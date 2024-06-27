@@ -2,8 +2,12 @@
 #include "cfop.h"
 #include "Accelerometer.h"
 #include <map>
+#include <vector>
 #define codeLed 6
-
+struct motorEncoder{
+    byte motorAddress;
+    int encoderChannel;
+};
 enum states {
     idle,
     scrambling,
@@ -36,6 +40,6 @@ class SSRC{
 
         Accelerometer accelerometer;
         i2cFunction i2c;
-        std::map<int, int> motorToEncoderMap;
-        
+        //std::map<int, int> motorToEncoderMap;
+        std::vector<motorEncoder> componentMap;
 };

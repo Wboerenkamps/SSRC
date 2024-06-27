@@ -2,12 +2,21 @@
 #include "string"
 
 SSRC::SSRC() {
-    motorToEncoderMap[0x60] = 1; // m4 = 00 encoder niet 
-    motorToEncoderMap[0x61] = 2; // m6=  0x encoder = 2 -
-    motorToEncoderMap[0x63] = 0; // m1 = x0 encoder = 0 -- m/e werkend
-    motorToEncoderMap[0x64] = 1; // m3 = xx encoder = 1 -- e werkend
-    motorToEncoderMap[0x67] = 1; // m5 = 1x encoder = 1 niet
-    motorToEncoderMap[0x68] = 2; // m2 = 11 encoder = 2 niet
+    // motorToEncoderMap[0x63] = 3; // m1 = x0 encoder = 0 -- m/e werkend
+    // motorToEncoderMap[0x68] = 1; // m2 = 11 encoder = 2 niet
+    // motorToEncoderMap[0x64] = 2; // m3 = xx encoder = 1 -- e werkend
+    // motorToEncoderMap[0x65] = 1; // m4 = 00 encoder niet 
+    // motorToEncoderMap[0x67] = 0; // m5 = 1x encoder = 1 niet
+    // motorToEncoderMap[0x61] = 2; // m6=  0x encoder = 2 -
+     componentMap = {
+            {0x63, 3}, // m1 = x0 encoder = 0 -- m/e werkend
+            {0x68, 1}, // m2 = 11 encoder = 2 niet
+            {0x64, 2}, // m3 = xx encoder = 1 -- e werkend
+            {0x65, 1}, // m4 = 00 encoder niet 
+            {0x67, 0}, // m5 = 1x encoder = 1 niet
+            {0x61, 2}  // m6=  0x encoder = 2 -
+        };
+
 }
 
 SSRC::~SSRC() {}
@@ -250,30 +259,18 @@ void SSRC::resolve()
         }
     }
 }
-void SSRC::testSingleMotor(int i,bool encoderEnable){
+void SSRC::testSingleMotor(int i, bool encoderEnable) {
     int index = i;
-    int testMotorAddress = 0;
-    int testEncoderAddress = 0;
-    auto it = motorToEncoderMap.begin();
-    std::advance(it, index);
 
-    if (it != motorToEncoderMap.end()) {
-        testMotorAddress = it->first;
-        testEncoderAddress = it->second;
+    motors[i].init(componentMap[i].motorAddress, componentMap[i].encoderChannel);
 
-    } else {
-    }
-    if(encoderEnable){
-        Serial.print("MOTOR ADDRESS TEST FUNCTION: ");
-        Serial.println(testMotorAddress,HEX);
-        motors[i].init(testMotorAddress,testEncoderAddress);
-    }
     delay(500);
-    motors[i].rotate(1,40);
+    motors[i].rotate(1, 40);
     delay(500);
-    motors[i].rotate(3,40);
+    motors[i].rotate(3, 40);
     delay(500);
 }
+
 void SSRC::testEncoder()
 {
     motors[0].testRotate();
@@ -322,18 +319,18 @@ void SSRC::init()
     // for(int i = 1; i < 6; i++){
     //     motors[i - 1].init(1,i);
     // }
-    int i = 0;
-    for (const auto& pair : motorToEncoderMap) {
-        if (i > 4){
-        Serial.print("init motor address: ");
-        Serial.println(pair.first,HEX);
-        Serial.print("init encoder address: ");
-        Serial.println(pair.second);
+    // int i = 0;
+    // for (const auto& pair : motorToEncoderMap) {
+    //     if (i > 4){
+    //     Serial.print("init motor address: ");
+    //     Serial.println(pair.first,HEX);
+    //     Serial.print("init encoder address: ");
+    //     Serial.println(pair.second);
 
-        motors[i].init(pair.first,pair.second);
-        }
-        i++;
-    }
+    //     motors[i].init(pair.first,pair.second);
+    //     }
+    //     i++;
+    // }
     delay(5000);
     //motors[0].init(1, 1);
 }  
