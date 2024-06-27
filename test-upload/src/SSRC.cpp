@@ -9,12 +9,12 @@ SSRC::SSRC() {
     // motorToEncoderMap[0x67] = 0; // m5 = 1x encoder = 1 niet
     // motorToEncoderMap[0x61] = 2; // m6=  0x encoder = 2 -
      componentMap = {
-            {0x63, 3}, // m1 = x0 encoder = 0 -- m/e werkend
+            {0x63, 3}, // m1 = x0 encoder = 3
             {0x68, 1}, // m2 = 11 encoder = 2 niet
             {0x64, 2}, // m3 = xx encoder = 1 -- e werkend
-            {0x65, 1}, // m4 = 00 encoder niet 
+            {0x65, 5}, // m4 = 00 encoder niet 
             {0x67, 0}, // m5 = 1x encoder = 1 niet
-            {0x61, 2}  // m6=  0x encoder = 2 -
+            {0x61, 5}  // m6=  0x encoder = 2 -
         };
 
 }
@@ -263,7 +263,7 @@ void SSRC::testSingleMotor(int i, bool encoderEnable) {
     int index = i;
 
     motors[i].init(componentMap[i].motorAddress, componentMap[i].encoderChannel);
-
+    motors[i].readDRVFaultRegister();
     delay(500);
     motors[i].rotate(1, 40);
     delay(500);
@@ -331,6 +331,9 @@ void SSRC::init()
     //     }
     //     i++;
     // }
+    for(int i = 0;i < componentMap.size();i++){
+        motors[i].init(componentMap[i].motorAddress,componentMap[i].encoderChannel);
+    }
     delay(5000);
     //motors[0].init(1, 1);
 }  

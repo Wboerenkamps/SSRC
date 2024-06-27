@@ -319,5 +319,5 @@ void Motor::init(int motorAddress, int encoderAddress)
     this->motorAddress = motorAddress;
     this->rotate(3, 63);
     
-    encoder.init(encoderAddress);
+    //encoder.init(encoderAddress);
 }
